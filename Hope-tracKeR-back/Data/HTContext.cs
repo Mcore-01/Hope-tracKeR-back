@@ -1,5 +1,5 @@
 ﻿using Hope_tracKeR_back.Enums;
-using Hope_tracKeR_back.Models;
+using Hope_tracKeR_back.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hope_tracKeR_back.Data;

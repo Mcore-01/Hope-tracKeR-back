@@ -1,6 +1,6 @@
 ﻿using Hope_tracKeR_back.Enums;
 
-namespace Hope_tracKeR_back.Models;
+namespace Hope_tracKeR_back.Models.Entities;
 
 public class Item
 {

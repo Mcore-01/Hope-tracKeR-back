@@ -1,4 +1,4 @@
-﻿namespace Hope_tracKeR_back.Models;
+﻿namespace Hope_tracKeR_back.Models.Entities;
 
 public class Brand
 {
