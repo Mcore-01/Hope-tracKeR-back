@@ -1,4 +1,5 @@
-﻿using Hope_tracKeR_back.Models.DTOs.Requests;
+﻿using FluentResults;
+using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
@@ -14,26 +15,33 @@ public class ItemService : IItemService
         _itemRepository = itemRepository;
     }
 
-    public async Task<IEnumerable<ItemResponseDto>> GetItemsByFilters(ItemFilterDto filter)
+    public async Task<Result<IEnumerable<ItemResponseDto>>> GetItemsByFilters(ItemFilterDto filter)
     {
-        var items = await _itemRepository.GetItemsByFilters(filter);
+        var result = await _itemRepository.GetItemsByFilters(filter);
 
-        return items.Select(MapToResponseDto).ToList();
+        if (result.IsFailed)
+            return Result.Fail<IEnumerable<ItemResponseDto>>(result.Errors);
+
+        return Result.Ok<IEnumerable<ItemResponseDto>>(result.Value.Select(MapToResponseDto));
     }
-    public async Task<ItemResponseDto?> GetItemById(int id)
+    public async Task<Result<ItemResponseDto>> GetItemById(int id)
     {
-        var response = await _itemRepository.GetItemById(id);
-        return MapToResponseDto(response);
+        var result = await _itemRepository.GetItemById(id);
+
+        if (result.IsFailed)
+            return Result.Fail<ItemResponseDto>(result.Errors);
+        
+        return Result.Ok<ItemResponseDto>(MapToResponseDto(result.Value));
     }
-    public async Task<int> CreateItem(ItemModifyDto item)
+    public async Task<Result<int>> CreateItem(ItemModifyDto item)
     {
         return await _itemRepository.CreateItem(item);
     }
-    public async Task<bool> UpdateItem(ItemModifyDto item)
+    public async Task<Result> UpdateItem(ItemModifyDto item)
     {
         return await _itemRepository.UpdateItem(item);
     }
-    public async Task<bool> RemoveItem(int id)
+    public async Task<Result> RemoveItem(int id)
     {
         return await (_itemRepository.RemoveItem(id));  
     }
