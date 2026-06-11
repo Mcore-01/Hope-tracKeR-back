@@ -6,4 +6,5 @@ public interface IEnumService
 {
     Task<IEnumerable<Category>> GetAllCategories();
     Task<IEnumerable<Brand>> GetAllBrands();
+    Task<IEnumerable<Address>> GetAllAddresses();
 }

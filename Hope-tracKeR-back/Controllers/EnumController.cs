@@ -27,4 +27,11 @@ public class EnumController : ControllerBase
         var brands = await _service.GetAllBrands();
         return Ok(brands);
     }
+
+    [HttpGet("addresses")]
+    public async Task<ActionResult<IEnumerable<Address>>> GetAllAddresses()
+    {
+        var addresses = await _service.GetAllAddresses();
+        return Ok(addresses);
+    }
 }

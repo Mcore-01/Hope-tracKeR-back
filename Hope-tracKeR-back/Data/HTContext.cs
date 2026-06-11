@@ -26,8 +26,14 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
             new Brand { Id = 4, Name = "Logitech" }
         );
 
+        modelBuilder.Entity<Address>().HasData(
+            new Address { Id = 1, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 101"},     
+            new Address { Id = 2, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 102"},      
+            new Address { Id = 3, Branch = "ул. Толстого 31", Building = "Корпус 4", Floor = 3, Room = "Кабинет 314" }     
+        );
     }
 
     public DbSet<Category> Categories { get; set; }
     public DbSet<Brand> Brands { get; set; }
+    public DbSet<Address> Addresses { get; set; }   
 }
