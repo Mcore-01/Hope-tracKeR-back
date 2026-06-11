@@ -12,6 +12,7 @@ services.AddDbContext<HTContext>(options =>
 );
 services.AddScoped<IBrandRepository, BrandRepository>();
 services.AddScoped<ICategoryRepository, CategoryRepository>();
+services.AddScoped<IAddressRepository, AddressRepository>();
 services.AddScoped<IEnumService, EnumService>();
 services.AddSwaggerGen();
 services.AddControllers();
