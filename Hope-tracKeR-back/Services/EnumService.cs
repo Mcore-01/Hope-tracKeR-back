@@ -7,18 +7,20 @@ namespace Hope_tracKeR_back.Services
     public class EnumService : IEnumService
     {
         private readonly IBrandRepository _brandRepository;
-        public EnumService(IBrandRepository brandRepository)
+        private readonly ICategoryRepository _categoryRepository;
+        public EnumService(IBrandRepository brandRepository, ICategoryRepository categoryRepository)
         {
             _brandRepository = brandRepository;
+            _categoryRepository = categoryRepository;
         }
         public async Task<IEnumerable<Brand>> GetAllBrands()
         {
             return await _brandRepository.GetAllBrands();
         }
 
-        public Task<IEnumerable<Category>> GetAllCategories()
+        public async Task<IEnumerable<Category>> GetAllCategories()
         {
-            throw new NotImplementedException();
+            return await _categoryRepository.GetAllCategories();
         }
     }
 }

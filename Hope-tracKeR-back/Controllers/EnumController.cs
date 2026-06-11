@@ -17,7 +17,7 @@ public class EnumController : ControllerBase
     [HttpGet("categories")]
     public async Task<ActionResult<IEnumerable<Category>>> GetAllCategories()
     {
-        var categories = new List<Category>();  
+        var categories = await _service.GetAllCategories();
         return Ok(categories);
     }
 
