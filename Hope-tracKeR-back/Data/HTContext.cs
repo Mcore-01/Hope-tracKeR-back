@@ -14,11 +14,6 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Category>().HasData(
-            new Category { Id = 1, Name = "Техника" },
-            new Category { Id = 2, Name = "Расходники" }
-        );
-
         modelBuilder.Entity<Brand>().HasData(
             new Brand { Id = 1, Name = "Samsung" },
             new Brand { Id = 2, Name = "Dexp" },
@@ -33,7 +28,6 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
         );
     }
 
-    public DbSet<Category> Categories { get; set; }
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Address> Addresses { get; set; }   
 }

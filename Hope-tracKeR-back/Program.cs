@@ -11,7 +11,6 @@ services.AddDbContext<HTContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 services.AddScoped<IBrandRepository, BrandRepository>();
-services.AddScoped<ICategoryRepository, CategoryRepository>();
 services.AddScoped<IAddressRepository, AddressRepository>();
 services.AddScoped<IEnumService, EnumService>();
 services.AddSwaggerGen();

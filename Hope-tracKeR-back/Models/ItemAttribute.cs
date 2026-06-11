@@ -4,7 +4,7 @@ public class ItemAttribute
 {
     public int Id { get; set; }
     public int ItemId { get; set; }
-    public Item Item { get; set; }
+    public Item Item { get; set; } = null!;
     public string Name { get; set; } = null!;
     public string Value { get; set; } = null!;
 }

@@ -1,4 +1,5 @@
-﻿using Hope_tracKeR_back.Models;
+﻿using Hope_tracKeR_back.Enums;
+using Hope_tracKeR_back.Models;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +14,6 @@ public class EnumController : ControllerBase
     public EnumController(IEnumService service)
     {
         _service = service;
-    }
-    [HttpGet("categories")]
-    public async Task<ActionResult<IEnumerable<Category>>> GetAllCategories()
-    {
-        var categories = await _service.GetAllCategories();
-        return Ok(categories);
     }
 
     [HttpGet("brands")]
