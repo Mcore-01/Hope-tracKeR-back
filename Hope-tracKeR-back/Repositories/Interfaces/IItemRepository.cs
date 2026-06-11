@@ -6,5 +6,9 @@ namespace Hope_tracKeR_back.Repositories.Interfaces
     public interface IItemRepository
     {
         Task<IEnumerable<Item>> GetItemsByFilters(ItemFilterDto filter);
+        Task<Item?> GetItemById(int id);
+        Task<int> CreateItem(ItemModifyDto item);
+        Task<bool> UpdateItem(ItemModifyDto item);
+        Task<bool> RemoveItem(int id);
     }
 }

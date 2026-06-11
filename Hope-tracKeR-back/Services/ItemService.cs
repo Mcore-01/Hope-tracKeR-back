@@ -1,5 +1,6 @@
 ﻿using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
+using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Hope_tracKeR_back.Services.Interfaces;
 
@@ -17,19 +18,41 @@ public class ItemService : IItemService
     {
         var items = await _itemRepository.GetItemsByFilters(filter);
 
-        return items.Select(i => new ItemResponseDto
+        return items.Select(MapToResponseDto).ToList();
+    }
+    public async Task<ItemResponseDto?> GetItemById(int id)
+    {
+        var response = await _itemRepository.GetItemById(id);
+        return MapToResponseDto(response);
+    }
+    public async Task<int> CreateItem(ItemModifyDto item)
+    {
+        return await _itemRepository.CreateItem(item);
+    }
+    public async Task<bool> UpdateItem(ItemModifyDto item)
+    {
+        return await _itemRepository.UpdateItem(item);
+    }
+    public async Task<bool> RemoveItem(int id)
+    {
+        return await (_itemRepository.RemoveItem(id));  
+    }
+
+    public ItemResponseDto MapToResponseDto(Item item)
+    {
+        return new ItemResponseDto
         {
-            Id = i.Id,
-            Name = i.Name,
-            SerialId = i.SerialId,
-            Category = i.Category.ToString(),
-            Status = i.Status.ToString(),
-            AddedDate = i.AddedDate,
-            AddressId = i.AddressId,
-            Address = $"{i.Address.Branch}, {i.Address.Building}, {i.Address.Floor}, {i.Address.Room}",
-            BrandId = i.BrandId,
-            Brand = i.Brand.Name,
-            Attributes = i.Attributes.ToDictionary(a => a.Name, a => a.Value)
-        });
+            Id = item.Id,
+            Name = item.Name,
+            SerialId = item.SerialId,
+            Category = item.Category.ToString(),
+            Status = item.Status.ToString(),
+            AddedDate = item.AddedDate,
+            AddressId = item.AddressId,
+            Address = $"{item.Address.Branch}, {item.Address.Building}, {item.Address.Floor}, {item.Address.Room}",
+            BrandId = item.BrandId,
+            Brand = item.Brand.Name,
+            Attributes = item.Attributes.ToDictionary(a => a.Name, a => a.Value)
+        };
     }
 }
