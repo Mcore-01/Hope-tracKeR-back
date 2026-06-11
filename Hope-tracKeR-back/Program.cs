@@ -11,8 +11,10 @@ services.AddDbContext<HTContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 services.AddScoped<IBrandRepository, BrandRepository>();
+services.AddScoped<IItemRepository, ItemRepository>();
 services.AddScoped<IAddressRepository, AddressRepository>();
 services.AddScoped<IEnumService, EnumService>();
+services.AddScoped<IItemService, ItemService>();
 services.AddSwaggerGen();
 services.AddControllers();
 var app = builder.Build();
