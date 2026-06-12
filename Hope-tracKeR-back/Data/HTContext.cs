@@ -17,10 +17,17 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
 
         modelBuilder.Entity<Item>()
             .Property(e => e.AddedDate)
-            .HasConversion(
-                v => v.ToUniversalTime(),
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
-            );
+            .HasConversion(v => v.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+        modelBuilder.Entity<Repair>()
+            .Property(e => e.StartDate)
+            .HasConversion(v => v.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+        modelBuilder.Entity<Repair>()
+            .Property(e => e.EndDate)
+            .HasConversion(v => v.HasValue ? v.Value.ToUniversalTime() : (DateTime?)null,
+                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : (DateTime?)null
+        );
 
         modelBuilder.Entity<Brand>().HasData(
             new Brand { Id = 1, Name = "Samsung" },
