@@ -19,8 +19,12 @@ public class EnumController : ControllerBase
     [HttpGet("addresses")]
     public async Task<ActionResult<IEnumerable<Address>>> GetAllAddresses()
     {
-        var addresses = await _service.GetAllAddresses();
-        return Ok(addresses);
+        var result = await _service.GetAllAddresses();
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        return BadRequest(result.Errors.First().Message);
     }
 
     [HttpGet("brands")]

@@ -1,20 +1,28 @@
-﻿using Hope_tracKeR_back.Data;
+﻿using FluentResults;
+using Hope_tracKeR_back.Data;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hope_tracKeR_back.Repositories
+namespace Hope_tracKeR_back.Repositories;
+
+public class AddressRepository : IAddressRepository
 {
-    public class AddressRepository : IAddressRepository
+    private readonly HTContext _context;
+    public AddressRepository(HTContext context)
     {
-        private readonly HTContext _context;
-        public AddressRepository(HTContext context)
+        _context = context;
+    }
+    public async Task<Result<IEnumerable<Address>>> GetAllAddresses()
+    {
+        try
         {
-            _context = context;
+            var addresses = await _context.Addresses.ToListAsync();
+            return  Result.Ok<IEnumerable<Address>>(addresses);
         }
-        public async Task<IEnumerable<Address>> GetAllAddresses()
+        catch (Exception ex)
         {
-            return await _context.Addresses.ToListAsync();
+            return Result.Fail<IEnumerable<Address>>(new Error("Ошибка базы данных!").CausedBy(ex));
         }
     }
 }
