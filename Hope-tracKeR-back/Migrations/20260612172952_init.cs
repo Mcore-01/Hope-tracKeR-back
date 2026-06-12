@@ -180,12 +180,12 @@ namespace Hope_tracKeR_back.Migrations
                 columns: new[] { "Id", "AddedDate", "AddressId", "BrandId", "Category", "Name", "SerialId", "Status" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 1, 14, 19, 0, 0, 0, DateTimeKind.Utc), 1, 1, 0, "Монитор Samsung Odyssey", "SAMS-OD-001", 0 },
-                    { 2, new DateTime(2024, 2, 9, 19, 0, 0, 0, DateTimeKind.Utc), 2, 3, 0, "Ноутбук LG Gram", "LG-GRAM-002", 2 },
-                    { 3, new DateTime(2024, 3, 4, 19, 0, 0, 0, DateTimeKind.Utc), 1, 4, 0, "Клавиатура Logitech MX", "LOG-MX-003", 0 },
-                    { 4, new DateTime(2024, 3, 19, 19, 0, 0, 0, DateTimeKind.Utc), 3, 2, 1, "Бумага A4 500л", "PAP-A4-004", 0 },
-                    { 5, new DateTime(2024, 3, 31, 19, 0, 0, 0, DateTimeKind.Utc), 2, 1, 1, "Картридж для принтера", "CRTG-005", 0 },
-                    { 6, new DateTime(2024, 1, 24, 19, 0, 0, 0, DateTimeKind.Utc), 1, 2, 1, "USB Flash Drive 32GB", "USB-32-006", 1 }
+                    { 1, new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, 0, "Монитор Samsung Odyssey", "SAMS-OD-001", 0 },
+                    { 2, new DateTime(2024, 2, 10, 0, 0, 0, 0, DateTimeKind.Utc), 2, 3, 0, "Ноутбук LG Gram", "LG-GRAM-002", 2 },
+                    { 3, new DateTime(2024, 3, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1, 4, 0, "Клавиатура Logitech MX", "LOG-MX-003", 0 },
+                    { 4, new DateTime(2024, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), 3, 2, 1, "Бумага A4 500л", "PAP-A4-004", 0 },
+                    { 5, new DateTime(2024, 4, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, 1, 1, "Картридж для принтера", "CRTG-005", 0 },
+                    { 6, new DateTime(2024, 1, 25, 0, 0, 0, 0, DateTimeKind.Utc), 1, 2, 1, "USB Flash Drive 32GB", "USB-32-006", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -203,12 +203,12 @@ namespace Hope_tracKeR_back.Migrations
                 columns: new[] { "Id", "AddressId", "Description", "Diagnosis", "EndDate", "ItemId", "StartDate", "Status" },
                 values: new object[,]
                 {
-                    { 1, 1, "Монитор не включается, индикатор питания не горит", "Неисправен блок питания, замена конденсаторов", new DateTime(2025, 5, 14, 19, 0, 0, 0, DateTimeKind.Utc), 1, new DateTime(2025, 5, 9, 19, 0, 0, 0, DateTimeKind.Utc), 1 },
-                    { 2, 2, "Ноутбук зависает при загрузке Windows", "Ожидается диагностика", null, 2, new DateTime(2025, 5, 19, 19, 0, 0, 0, DateTimeKind.Utc), 0 },
-                    { 3, 1, "Клавиатура не печатает буквы, некоторые кнопки залипли", "Механическое повреждение, требуется чистка", null, 3, new DateTime(2025, 5, 24, 19, 0, 0, 0, DateTimeKind.Utc), 0 },
-                    { 4, 1, "Флешка не определяется компьютером", "Сбой контроллера, данные восстановлены", new DateTime(2025, 5, 7, 19, 0, 0, 0, DateTimeKind.Utc), 6, new DateTime(2025, 5, 4, 19, 0, 0, 0, DateTimeKind.Utc), 1 },
-                    { 5, 1, "Монитор моргает и периодически гаснет", "Неисправен шлейф матрицы", null, 1, new DateTime(2025, 5, 31, 19, 0, 0, 0, DateTimeKind.Utc), 0 },
-                    { 6, 2, "Ноутбук сильно греется и выключается", "Ожидается диагностика", null, 2, new DateTime(2025, 6, 2, 19, 0, 0, 0, DateTimeKind.Utc), 0 }
+                    { 1, 1, "Монитор не включается, индикатор питания не горит", "Неисправен блок питания, замена конденсаторов", new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Utc), 1, new DateTime(2025, 5, 10, 0, 0, 0, 0, DateTimeKind.Utc), 1 },
+                    { 2, 2, "Ноутбук зависает при загрузке Windows", "Ожидается диагностика", null, 2, new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc), 0 },
+                    { 3, 1, "Клавиатура не печатает буквы, некоторые кнопки залипли", "Механическое повреждение, требуется чистка", null, 3, new DateTime(2025, 5, 25, 0, 0, 0, 0, DateTimeKind.Utc), 0 },
+                    { 4, 1, "Флешка не определяется компьютером", "Сбой контроллера, данные восстановлены", new DateTime(2025, 5, 8, 0, 0, 0, 0, DateTimeKind.Utc), 6, new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1 },
+                    { 5, 1, "Монитор моргает и периодически гаснет", "Неисправен шлейф матрицы", null, 1, new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), 0 },
+                    { 6, 2, "Ноутбук сильно греется и выключается", "Ожидается диагностика", null, 2, new DateTime(2025, 6, 3, 0, 0, 0, 0, DateTimeKind.Utc), 0 }
                 });
 
             migrationBuilder.CreateIndex(

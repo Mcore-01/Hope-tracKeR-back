@@ -15,20 +15,6 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Item>()
-            .Property(e => e.AddedDate)
-            .HasConversion(v => v.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-
-        modelBuilder.Entity<Repair>()
-            .Property(e => e.StartDate)
-            .HasConversion(v => v.ToUniversalTime(), v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-
-        modelBuilder.Entity<Repair>()
-            .Property(e => e.EndDate)
-            .HasConversion(v => v.HasValue ? v.Value.ToUniversalTime() : (DateTime?)null,
-                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : (DateTime?)null
-        );
-
         modelBuilder.Entity<Brand>().HasData(
             new Brand { Id = 1, Name = "Samsung" },
             new Brand { Id = 2, Name = "Dexp" },
@@ -45,18 +31,18 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
         );
 
         modelBuilder.Entity<Address>().HasData(
-            new Address { Id = 1, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 101"},     
-            new Address { Id = 2, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 102"},      
-            new Address { Id = 3, Branch = "ул. Толстого 31", Building = "Корпус 4", Floor = 3, Room = "Кабинет 314" }     
+            new Address { Id = 1, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 101" },
+            new Address { Id = 2, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 102" },
+            new Address { Id = 3, Branch = "ул. Толстого 31", Building = "Корпус 4", Floor = 3, Room = "Кабинет 314" }
         );
 
         modelBuilder.Entity<Item>().HasData(
-            new Item { Id = 1, Name = "Монитор Samsung Odyssey", SerialId = "SAMS-OD-001", Category = ItemCategory.Technique, Status = ItemStatus.InStock, AddedDate = new DateTime(2024, 1, 15), AddressId = 1, BrandId = 1 },
-            new Item { Id = 2, Name = "Ноутбук LG Gram", SerialId = "LG-GRAM-002", Category = ItemCategory.Technique, Status = ItemStatus.Issued, AddedDate = new DateTime(2024, 2, 10), AddressId = 2, BrandId = 3 },
-            new Item { Id = 3, Name = "Клавиатура Logitech MX", SerialId = "LOG-MX-003", Category = ItemCategory.Technique, Status = ItemStatus.InStock, AddedDate = new DateTime(2024, 3, 5), AddressId = 1, BrandId = 4 },
-            new Item { Id = 4, Name = "Бумага A4 500л", SerialId = "PAP-A4-004", Category = ItemCategory.Consumables, Status = ItemStatus.InStock, AddedDate = new DateTime(2024, 3, 20), AddressId = 3, BrandId = 2 },
-            new Item { Id = 5, Name = "Картридж для принтера", SerialId = "CRTG-005", Category = ItemCategory.Consumables, Status = ItemStatus.InStock, AddedDate = new DateTime(2024, 4, 1), AddressId = 2, BrandId = 1 },
-            new Item { Id = 6, Name = "USB Flash Drive 32GB", SerialId = "USB-32-006", Category = ItemCategory.Consumables, Status = ItemStatus.Repair, AddedDate = new DateTime(2024, 1, 25), AddressId = 1, BrandId = 2 }
+            new Item { Id = 1, Name = "Монитор Samsung Odyssey", SerialId = "SAMS-OD-001", Category = ItemCategory.Technique, Status = ItemStatus.InStock, AddedDate = new DateTime(2024, 1, 15, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 1 },
+            new Item { Id = 2, Name = "Ноутбук LG Gram", SerialId = "LG-GRAM-002", Category = ItemCategory.Technique, Status = ItemStatus.Issued, AddedDate = new DateTime(2024, 2, 10, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 3 },
+            new Item { Id = 3, Name = "Клавиатура Logitech MX", SerialId = "LOG-MX-003", Category = ItemCategory.Technique, Status = ItemStatus.InStock, AddedDate = new DateTime(2024, 3, 5, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 4 },
+            new Item { Id = 4, Name = "Бумага A4 500л", SerialId = "PAP-A4-004", Category = ItemCategory.Consumables, Status = ItemStatus.InStock, AddedDate = new DateTime(2024, 3, 20, 0, 0, 0, DateTimeKind.Utc), AddressId = 3, BrandId = 2 },
+            new Item { Id = 5, Name = "Картридж для принтера", SerialId = "CRTG-005", Category = ItemCategory.Consumables, Status = ItemStatus.InStock, AddedDate = new DateTime(2024, 4, 1, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 1 },
+            new Item { Id = 6, Name = "USB Flash Drive 32GB", SerialId = "USB-32-006", Category = ItemCategory.Consumables, Status = ItemStatus.Repair, AddedDate = new DateTime(2024, 1, 25, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 2 }
         );
 
         modelBuilder.Entity<ItemAttribute>().HasData(
@@ -66,12 +52,12 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
         );
 
         modelBuilder.Entity<Repair>().HasData(
-            new Repair { Id = 1, StartDate = new DateTime(2025, 5, 10), EndDate = new DateTime(2025, 5, 15), Description = "Монитор не включается, индикатор питания не горит", Diagnosis = "Неисправен блок питания, замена конденсаторов", Status = RepairStatus.Completed, ItemId = 1, AddressId = 1 },
-            new Repair { Id = 2, StartDate = new DateTime(2025, 5, 20), EndDate = null, Description = "Ноутбук зависает при загрузке Windows", Diagnosis = "Ожидается диагностика", Status = RepairStatus.InProgress, ItemId = 2, AddressId = 2 },
-            new Repair { Id = 3, StartDate = new DateTime(2025, 5, 25), EndDate = null, Description = "Клавиатура не печатает буквы, некоторые кнопки залипли", Diagnosis = "Механическое повреждение, требуется чистка", Status = RepairStatus.InProgress, ItemId = 3, AddressId = 1 },
-            new Repair { Id = 4, StartDate = new DateTime(2025, 5, 5), EndDate = new DateTime(2025, 5, 8), Description = "Флешка не определяется компьютером", Diagnosis = "Сбой контроллера, данные восстановлены", Status = RepairStatus.Completed, ItemId = 6, AddressId = 1 },
-            new Repair { Id = 5, StartDate = new DateTime(2025, 6, 1), EndDate = null, Description = "Монитор моргает и периодически гаснет", Diagnosis = "Неисправен шлейф матрицы", Status = RepairStatus.InProgress, ItemId = 1, AddressId = 1 },
-            new Repair { Id = 6, StartDate = new DateTime(2025, 6, 3), EndDate = null, Description = "Ноутбук сильно греется и выключается", Diagnosis = "Ожидается диагностика", Status = RepairStatus.InProgress, ItemId = 2, AddressId = 2 }
+            new Repair { Id = 1, StartDate = new DateTime(2025, 5, 10, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 5, 15, 0, 0, 0, DateTimeKind.Utc), Description = "Монитор не включается, индикатор питания не горит", Diagnosis = "Неисправен блок питания, замена конденсаторов", Status = RepairStatus.Completed, ItemId = 1, AddressId = 1 },
+            new Repair { Id = 2, StartDate = new DateTime(2025, 5, 20, 0, 0, 0, DateTimeKind.Utc), EndDate = null, Description = "Ноутбук зависает при загрузке Windows", Diagnosis = "Ожидается диагностика", Status = RepairStatus.InProgress, ItemId = 2, AddressId = 2 },
+            new Repair { Id = 3, StartDate = new DateTime(2025, 5, 25, 0, 0, 0, DateTimeKind.Utc), EndDate = null, Description = "Клавиатура не печатает буквы, некоторые кнопки залипли", Diagnosis = "Механическое повреждение, требуется чистка", Status = RepairStatus.InProgress, ItemId = 3, AddressId = 1 },
+            new Repair { Id = 4, StartDate = new DateTime(2025, 5, 5, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 5, 8, 0, 0, 0, DateTimeKind.Utc), Description = "Флешка не определяется компьютером", Diagnosis = "Сбой контроллера, данные восстановлены", Status = RepairStatus.Completed, ItemId = 6, AddressId = 1 },
+            new Repair { Id = 5, StartDate = new DateTime(2025, 6, 1, 0, 0, 0, DateTimeKind.Utc), EndDate = null, Description = "Монитор моргает и периодически гаснет", Diagnosis = "Неисправен шлейф матрицы", Status = RepairStatus.InProgress, ItemId = 1, AddressId = 1 },
+            new Repair { Id = 6, StartDate = new DateTime(2025, 6, 3, 0, 0, 0, DateTimeKind.Utc), EndDate = null, Description = "Ноутбук сильно греется и выключается", Diagnosis = "Ожидается диагностика", Status = RepairStatus.InProgress, ItemId = 2, AddressId = 2 }
         );
     }
 

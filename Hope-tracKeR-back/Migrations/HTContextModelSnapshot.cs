@@ -158,7 +158,7 @@ namespace Hope_tracKeR_back.Migrations
                         new
                         {
                             Id = 1,
-                            AddedDate = new DateTime(2024, 1, 14, 19, 0, 0, 0, DateTimeKind.Utc),
+                            AddedDate = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddressId = 1,
                             BrandId = 1,
                             Category = 0,
@@ -169,7 +169,7 @@ namespace Hope_tracKeR_back.Migrations
                         new
                         {
                             Id = 2,
-                            AddedDate = new DateTime(2024, 2, 9, 19, 0, 0, 0, DateTimeKind.Utc),
+                            AddedDate = new DateTime(2024, 2, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddressId = 2,
                             BrandId = 3,
                             Category = 0,
@@ -180,7 +180,7 @@ namespace Hope_tracKeR_back.Migrations
                         new
                         {
                             Id = 3,
-                            AddedDate = new DateTime(2024, 3, 4, 19, 0, 0, 0, DateTimeKind.Utc),
+                            AddedDate = new DateTime(2024, 3, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddressId = 1,
                             BrandId = 4,
                             Category = 0,
@@ -191,7 +191,7 @@ namespace Hope_tracKeR_back.Migrations
                         new
                         {
                             Id = 4,
-                            AddedDate = new DateTime(2024, 3, 19, 19, 0, 0, 0, DateTimeKind.Utc),
+                            AddedDate = new DateTime(2024, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddressId = 3,
                             BrandId = 2,
                             Category = 1,
@@ -202,7 +202,7 @@ namespace Hope_tracKeR_back.Migrations
                         new
                         {
                             Id = 5,
-                            AddedDate = new DateTime(2024, 3, 31, 19, 0, 0, 0, DateTimeKind.Utc),
+                            AddedDate = new DateTime(2024, 4, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddressId = 2,
                             BrandId = 1,
                             Category = 1,
@@ -213,7 +213,7 @@ namespace Hope_tracKeR_back.Migrations
                         new
                         {
                             Id = 6,
-                            AddedDate = new DateTime(2024, 1, 24, 19, 0, 0, 0, DateTimeKind.Utc),
+                            AddedDate = new DateTime(2024, 1, 25, 0, 0, 0, 0, DateTimeKind.Utc),
                             AddressId = 1,
                             BrandId = 2,
                             Category = 1,
@@ -317,9 +317,9 @@ namespace Hope_tracKeR_back.Migrations
                             AddressId = 1,
                             Description = "Монитор не включается, индикатор питания не горит",
                             Diagnosis = "Неисправен блок питания, замена конденсаторов",
-                            EndDate = new DateTime(2025, 5, 14, 19, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             ItemId = 1,
-                            StartDate = new DateTime(2025, 5, 9, 19, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 5, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 1
                         },
                         new
@@ -329,7 +329,7 @@ namespace Hope_tracKeR_back.Migrations
                             Description = "Ноутбук зависает при загрузке Windows",
                             Diagnosis = "Ожидается диагностика",
                             ItemId = 2,
-                            StartDate = new DateTime(2025, 5, 19, 19, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 0
                         },
                         new
@@ -339,7 +339,7 @@ namespace Hope_tracKeR_back.Migrations
                             Description = "Клавиатура не печатает буквы, некоторые кнопки залипли",
                             Diagnosis = "Механическое повреждение, требуется чистка",
                             ItemId = 3,
-                            StartDate = new DateTime(2025, 5, 24, 19, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 5, 25, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 0
                         },
                         new
@@ -348,9 +348,9 @@ namespace Hope_tracKeR_back.Migrations
                             AddressId = 1,
                             Description = "Флешка не определяется компьютером",
                             Diagnosis = "Сбой контроллера, данные восстановлены",
-                            EndDate = new DateTime(2025, 5, 7, 19, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2025, 5, 8, 0, 0, 0, 0, DateTimeKind.Utc),
                             ItemId = 6,
-                            StartDate = new DateTime(2025, 5, 4, 19, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 1
                         },
                         new
@@ -360,7 +360,7 @@ namespace Hope_tracKeR_back.Migrations
                             Description = "Монитор моргает и периодически гаснет",
                             Diagnosis = "Неисправен шлейф матрицы",
                             ItemId = 1,
-                            StartDate = new DateTime(2025, 5, 31, 19, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 0
                         },
                         new
@@ -370,7 +370,7 @@ namespace Hope_tracKeR_back.Migrations
                             Description = "Ноутбук сильно греется и выключается",
                             Diagnosis = "Ожидается диагностика",
                             ItemId = 2,
-                            StartDate = new DateTime(2025, 6, 2, 19, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 6, 3, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 0
                         });
                 });
