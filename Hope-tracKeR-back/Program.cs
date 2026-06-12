@@ -1,3 +1,4 @@
+using Hope_tracKeR_back.Config;
 using Hope_tracKeR_back.Data;
 using Hope_tracKeR_back.Repositories;
 using Hope_tracKeR_back.Repositories.Interfaces;
@@ -18,6 +19,8 @@ services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IEnumService, EnumService>();
 services.AddScoped<IItemService, ItemService>();
 services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddAuthorization();
+builder.Services.ConfigureAuthentication();
 services.AddSwaggerGen();
 services.AddControllers();
 var app = builder.Build();
@@ -33,5 +36,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();
