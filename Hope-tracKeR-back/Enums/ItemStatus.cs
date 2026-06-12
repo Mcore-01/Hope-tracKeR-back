@@ -3,7 +3,7 @@
 public enum ItemStatus
 {
     InStock,
-    Repair, 
+    Repair,
     Issued, 
     Broken
 }
