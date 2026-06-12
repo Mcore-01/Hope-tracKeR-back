@@ -148,15 +148,22 @@ public class ItemRepository : IItemRepository
     }
     public async Task<Result> RemoveItem(int id)
     {
-        var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == id);
+        try
+        {
+            var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == id);
 
-        if (existingItem == default)
-            return Result.Fail((new Error("Предмет не найден!")));
+            if (existingItem == default)
+                return Result.Fail((new Error("Предмет не найден!")));
 
-        _context.Items.Remove(existingItem);
+            _context.Items.Remove(existingItem);
 
-        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-        return Result.Ok();
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail($"Ошибка удаления предмета: {ex.Message}");
+        }
     }
 }

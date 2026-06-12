@@ -1,7 +1,5 @@
 ﻿using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
-using Hope_tracKeR_back.Models.Entities;
-using Hope_tracKeR_back.Services;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +25,7 @@ public class ItemController : ControllerBase
 
         return BadRequest(result.Errors.First().Message);
     }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<ItemResponseDto>> GetItemById(int id)
     {
@@ -40,6 +39,7 @@ public class ItemController : ControllerBase
 
         return BadRequest(result.Errors.First().Message);
     }
+
     [HttpPost("create")]
     public async Task<ActionResult<int>> CreateItem([FromBody] ItemModifyDto item)
     {
@@ -50,6 +50,7 @@ public class ItemController : ControllerBase
 
         return BadRequest(result.Errors.First().Message);
     }
+
     [HttpPut("update")]
     public async Task<ActionResult> UpdateItem([FromBody] ItemModifyDto item)
     {
@@ -63,6 +64,7 @@ public class ItemController : ControllerBase
 
         return BadRequest(result.Errors.First().Message);
     }
+
     [HttpDelete("{id}")]
     public async Task<ActionResult> RemoveItem(int id)
     {

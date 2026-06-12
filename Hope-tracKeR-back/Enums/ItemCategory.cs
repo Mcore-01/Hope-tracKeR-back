@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Hope_tracKeR_back.Enums;
+﻿namespace Hope_tracKeR_back.Enums;
 
 public enum ItemCategory
 {

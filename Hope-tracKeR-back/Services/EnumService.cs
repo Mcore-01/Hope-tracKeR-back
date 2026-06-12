@@ -1,4 +1,6 @@
-﻿using Hope_tracKeR_back.Models.Entities;
+﻿using FluentResults;
+using Hope_tracKeR_back.Models.DTOs.Requests;
+using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Hope_tracKeR_back.Services.Interfaces;
 
@@ -18,10 +20,42 @@ namespace Hope_tracKeR_back.Services
         {
             return await _addressRepository.GetAllAddresses();
         }
-
-        public async Task<IEnumerable<Brand>> GetAllBrands()
+        
+        public async Task<Result<IEnumerable<BrandDto>>> GetAllBrands()
         {
-            return await _brandRepository.GetAllBrands();
+            var result = await _brandRepository.GetAllBrands();
+
+            if (result.IsFailed)
+                return Result.Fail<IEnumerable<BrandDto>>(result.Errors);
+
+            return Result.Ok(result.Value.Select(b => new BrandDto() { Id = b.Id, Name = b.Name}));
+        }
+
+        public async Task<Result<BrandDto>> GetBrandById(int id)
+        {
+            var result = await _brandRepository.GetBrandById(id);
+
+            if (result.IsFailed)
+                return Result.Fail<BrandDto>(result.Errors);
+
+            var brand = result.Value;
+
+            return Result.Ok(new BrandDto() { Id = brand.Id, Name = brand.Name });
+        }
+
+        public Task<Result<int>> CreateBrand(BrandDto brand)
+        {
+            return _brandRepository.CreateBrand(brand); 
+        }
+       
+        public Task<Result> UpdateBrand(BrandDto brand)
+        {
+            return _brandRepository.UpdateBrand(brand);
+        }
+
+        public Task<Result> RemoveBrand(int id)
+        {
+            return _brandRepository.RemoveBrand(id);
         }
     }
 }

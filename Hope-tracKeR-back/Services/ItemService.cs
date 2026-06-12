@@ -22,8 +22,9 @@ public class ItemService : IItemService
         if (result.IsFailed)
             return Result.Fail<IEnumerable<ItemResponseDto>>(result.Errors);
 
-        return Result.Ok<IEnumerable<ItemResponseDto>>(result.Value.Select(MapToResponseDto));
+        return Result.Ok(result.Value.Select(MapToResponseDto));
     }
+
     public async Task<Result<ItemResponseDto>> GetItemById(int id)
     {
         var result = await _itemRepository.GetItemById(id);
@@ -31,16 +32,19 @@ public class ItemService : IItemService
         if (result.IsFailed)
             return Result.Fail<ItemResponseDto>(result.Errors);
         
-        return Result.Ok<ItemResponseDto>(MapToResponseDto(result.Value));
+        return Result.Ok(MapToResponseDto(result.Value));
     }
+
     public async Task<Result<int>> CreateItem(ItemModifyDto item)
     {
         return await _itemRepository.CreateItem(item);
     }
+
     public async Task<Result> UpdateItem(ItemModifyDto item)
     {
         return await _itemRepository.UpdateItem(item);
     }
+
     public async Task<Result> RemoveItem(int id)
     {
         return await (_itemRepository.RemoveItem(id));  
