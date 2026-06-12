@@ -17,32 +17,32 @@ public class ItemService : IItemService
         _repairRepository = repairRepository;
     }
 
-    public async Task<Result<IEnumerable<ItemResponseDto>>> GetItemsByFilters(ItemFilterDto filter)
+    public async Task<Result<IEnumerable<ItemResponse>>> GetItemsByFilters(ItemFilter filter)
     {
         var result = await _itemRepository.GetItemsByFilters(filter);
 
         if (result.IsFailed)
-            return Result.Fail<IEnumerable<ItemResponseDto>>(result.Errors);
+            return Result.Fail<IEnumerable<ItemResponse>>(result.Errors);
 
         return Result.Ok(result.Value.Select(MapToResponseDto));
     }
 
-    public async Task<Result<ItemResponseDto>> GetItemById(int id)
+    public async Task<Result<ItemResponse>> GetItemById(int id)
     {
         var result = await _itemRepository.GetItemById(id);
 
         if (result.IsFailed)
-            return Result.Fail<ItemResponseDto>(result.Errors);
+            return Result.Fail<ItemResponse>(result.Errors);
         
         return Result.Ok(MapToResponseDto(result.Value));
     }
 
-    public async Task<Result<int>> CreateItem(ItemModifyDto item)
+    public async Task<Result<int>> CreateItem(ItemModify item)
     {
         return await _itemRepository.CreateItem(item);
     }
 
-    public async Task<Result> UpdateItem(ItemModifyDto item)
+    public async Task<Result> UpdateItem(ItemModify item)
     {
         return await _itemRepository.UpdateItem(item);
     }
@@ -52,9 +52,9 @@ public class ItemService : IItemService
         return await (_itemRepository.RemoveItem(id));  
     }
 
-    public ItemResponseDto MapToResponseDto(Item item)
+    public ItemResponse MapToResponseDto(Item item)
     {
-        return new ItemResponseDto
+        return new ItemResponse
         {
             Id = item.Id,
             Name = item.Name,

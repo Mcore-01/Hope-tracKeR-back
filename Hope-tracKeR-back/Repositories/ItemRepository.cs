@@ -16,7 +16,7 @@ public class ItemRepository : IItemRepository
         _context = context;
     }
 
-    public async Task<Result<IEnumerable<Item>>> GetItemsByFilters(ItemFilterDto filter)
+    public async Task<Result<IEnumerable<Item>>> GetItemsByFilters(ItemFilter filter)
     {
         try
         {
@@ -87,7 +87,7 @@ public class ItemRepository : IItemRepository
         }
     }
 
-    public async Task<Result<int>> CreateItem(ItemModifyDto item)
+    public async Task<Result<int>> CreateItem(ItemModify item)
     {
         try
         {
@@ -115,7 +115,7 @@ public class ItemRepository : IItemRepository
         }
     }
 
-    public async Task<Result> UpdateItem(ItemModifyDto item)
+    public async Task<Result> UpdateItem(ItemModify item)
     {
         
         try

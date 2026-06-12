@@ -16,14 +16,14 @@ public class EnumService : IEnumService
         _addressRepository = addressRepository;
     }
 
-    public async Task<Result<IEnumerable<AddressResponseDto>>> GetAllAddresses()
+    public async Task<Result<IEnumerable<AddressResponse>>> GetAllAddresses()
     {
         var result = await _addressRepository.GetAllAddresses();
 
         if (result.IsFailed)
-            return Result.Fail<IEnumerable<AddressResponseDto>>(result.Errors);
+            return Result.Fail<IEnumerable<AddressResponse>>(result.Errors);
 
-        return Result.Ok(result.Value.Select(a => new AddressResponseDto() { Id = a.Id, Branch = a.Branch, Building = a.Building, Floor = a.Floor, Room = a.Room }));
+        return Result.Ok(result.Value.Select(a => new AddressResponse() { Id = a.Id, Branch = a.Branch, Building = a.Building, Floor = a.Floor, Room = a.Room }));
     }
     
     public async Task<Result<IEnumerable<BrandDto>>> GetAllBrands()

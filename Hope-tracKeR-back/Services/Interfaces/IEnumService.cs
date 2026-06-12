@@ -6,7 +6,7 @@ namespace Hope_tracKeR_back.Services.Interfaces;
 
 public interface IEnumService
 {
-    Task<Result<IEnumerable<AddressResponseDto>>> GetAllAddresses();
+    Task<Result<IEnumerable<AddressResponse>>> GetAllAddresses();
     Task<Result<IEnumerable<BrandDto>>> GetAllBrands();
     Task<Result<BrandDto>> GetBrandById(int id);
     Task<Result<int>> CreateBrand(BrandDto brand);

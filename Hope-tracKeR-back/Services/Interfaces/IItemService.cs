@@ -7,9 +7,9 @@ namespace Hope_tracKeR_back.Services.Interfaces;
 
 public interface IItemService : IRepairService
 {
-    Task<Result<IEnumerable<ItemResponseDto>>> GetItemsByFilters(ItemFilterDto filter);
-    Task<Result<ItemResponseDto>> GetItemById(int id);
-    Task<Result<int>> CreateItem(ItemModifyDto item);
-    Task<Result> UpdateItem(ItemModifyDto item);
+    Task<Result<IEnumerable<ItemResponse>>> GetItemsByFilters(ItemFilter filter);
+    Task<Result<ItemResponse>> GetItemById(int id);
+    Task<Result<int>> CreateItem(ItemModify item);
+    Task<Result> UpdateItem(ItemModify item);
     Task<Result> RemoveItem(int id);
 }

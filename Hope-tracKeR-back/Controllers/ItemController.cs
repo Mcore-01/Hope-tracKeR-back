@@ -16,7 +16,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost("items")]
-    public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetAllItems([FromBody] ItemFilterDto filter)
+    public async Task<ActionResult<IEnumerable<ItemResponse>>> GetAllItems([FromBody] ItemFilter filter)
     {
         var result = await _service.GetItemsByFilters(filter);
 
@@ -27,7 +27,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ItemResponseDto>> GetItemById(int id)
+    public async Task<ActionResult<ItemResponse>> GetItemById(int id)
     {
         var result = await _service.GetItemById(id);
 
@@ -41,7 +41,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<int>> CreateItem([FromBody] ItemModifyDto item)
+    public async Task<ActionResult<int>> CreateItem([FromBody] ItemModify item)
     {
         var result = await _service.CreateItem(item);
 
@@ -52,7 +52,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPut("update")]
-    public async Task<ActionResult> UpdateItem([FromBody] ItemModifyDto item)
+    public async Task<ActionResult> UpdateItem([FromBody] ItemModify item)
     {
         var result = await _service.UpdateItem(item);
 

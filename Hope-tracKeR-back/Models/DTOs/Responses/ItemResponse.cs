@@ -1,6 +1,6 @@
 ﻿namespace Hope_tracKeR_back.Models.DTOs.Responses;
 
-public class ItemResponseDto
+public class ItemResponse
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
