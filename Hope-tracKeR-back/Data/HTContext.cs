@@ -23,11 +23,11 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
         );
 
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FullName = "Рустам Вордович", Login = "word365", Password = "admin", Role = UserRole.Admin },
-            new User { Id = 2, FullName = "Родион Экселович", Login = "excel2003", Password = "admin", Role = UserRole.Admin },
-            new User { Id = 3, FullName = "Моисей Шарпович", Login = "sharp3000", Password = "admin", Role = UserRole.Admin },
-            new User { Id = 4, FullName = "Михаил Реактович", Login = "react2026", Password = "admin", Role = UserRole.Admin },
-            new User { Id = 5, FullName = "Кирилл TracKeR", Login = "legenda212", Password = "hope", Role = UserRole.Employee }
+            new User { Id = 1, FullName = "Рустам Вордович", Login = "word365", Password = "21232F297A57A5A743894A0E4A801FC3", Role = UserRole.Admin },
+            new User { Id = 2, FullName = "Родион Экселович", Login = "excel2003", Password = "21232F297A57A5A743894A0E4A801FC3", Role = UserRole.Admin },
+            new User { Id = 3, FullName = "Моисей Шарпович", Login = "sharp3000", Password = "21232F297A57A5A743894A0E4A801FC3", Role = UserRole.Admin },
+            new User { Id = 4, FullName = "Михаил Реактович", Login = "react2026", Password = "21232F297A57A5A743894A0E4A801FC3", Role = UserRole.Admin },
+            new User { Id = 5, FullName = "Кирилл TracKeR", Login = "legenda212", Password = "8C728E685DDDE9F7FBBC452155E29639", Role = UserRole.Employee }
         );
 
         modelBuilder.Entity<Address>().HasData(
