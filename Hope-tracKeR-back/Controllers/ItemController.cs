@@ -78,4 +78,32 @@ public class ItemController : ControllerBase
 
         return BadRequest(result.Errors.First().Message);
     }
+
+    [HttpPost("start_repair")]
+    public async Task<ActionResult> StartRepairItem([FromBody] StartRepairRequest repair)
+    {
+        var result = await _service.StartRepairItem(repair);
+
+        if (result.IsSuccess)
+            return Ok();
+
+        if (result.Errors.First().Message.Contains("Предмет не найден!"))
+            return NotFound(result.Errors.First().Message);
+
+        return BadRequest(result.Errors.First().Message);
+    }
+
+    [HttpPost("end_repair")]
+    public async Task<ActionResult> CompleteRepairItem([FromBody] CompleteRepairRequest repair)
+    {
+        var result = await _service.CompleteRepairItem(repair);
+
+        if (result.IsSuccess)
+            return Ok();
+
+        if (result.Errors.First().Message.Contains("Предмет не найден!"))
+            return NotFound(result.Errors.First().Message);
+
+        return BadRequest(result.Errors.First().Message);
+    }
 }

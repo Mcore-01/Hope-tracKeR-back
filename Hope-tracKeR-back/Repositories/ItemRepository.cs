@@ -166,4 +166,25 @@ public class ItemRepository : IItemRepository
             return Result.Fail($"Ошибка удаления предмета: {ex.Message}");
         }
     }
+
+    public async Task<Result> ChangeStatus(int id, ItemStatus status)
+    {
+        try
+        {
+            var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == id);
+
+            if (existingItem == default)
+                return Result.Fail((new Error("Предмет не найден!")));
+
+            existingItem.Status = status;
+
+            await _context.SaveChangesAsync();
+
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail($"Ошибка изменения статуса предмета: {ex.Message}");
+        }
+    }
 }

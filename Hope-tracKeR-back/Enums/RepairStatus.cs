@@ -3,6 +3,5 @@
 public enum RepairStatus
 {
     InProgress,
-    Completed,
-    Canceled
+    Completed
 }

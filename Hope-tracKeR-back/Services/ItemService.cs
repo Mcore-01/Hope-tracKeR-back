@@ -10,9 +10,11 @@ namespace Hope_tracKeR_back.Services;
 public class ItemService : IItemService
 {
     private readonly IItemRepository _itemRepository;
-    public ItemService(IItemRepository itemRepository)
+    private readonly IRepairRepository _repairRepository;
+    public ItemService(IItemRepository itemRepository, IRepairRepository repairRepository)
     {
         _itemRepository = itemRepository;
+        _repairRepository = repairRepository;
     }
 
     public async Task<Result<IEnumerable<ItemResponseDto>>> GetItemsByFilters(ItemFilterDto filter)
@@ -66,5 +68,19 @@ public class ItemService : IItemService
             Brand = item.Brand.Name,
             Attributes = item.Attributes.ToDictionary(a => a.Name, a => a.Value)
         };
+    }
+
+    public async Task<Result> StartRepairItem(StartRepairRequest repairRequest)
+    {
+        var result = await _repairRepository.CreateRepair(repairRequest);
+
+        return result;
+    }
+
+    public async Task<Result> CompleteRepairItem(CompleteRepairRequest repairRequest)
+    {
+        var result = await _repairRepository.CompleteRepair(repairRequest);
+
+        return result;
     }
 }
