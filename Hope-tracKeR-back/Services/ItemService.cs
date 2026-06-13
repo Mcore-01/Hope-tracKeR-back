@@ -97,7 +97,7 @@ public class ItemService : IItemService
             if (result.IsFailed)
                 return Result.Fail<byte[]>(result.Errors);
 
-            var items = result.Value.Select(MapToResponseDto).ToList();
+            var items = result.Value.ToList();
 
             if (items is null || items.Count == 0)
             {
@@ -127,12 +127,12 @@ public class ItemService : IItemService
                 {
                     worksheet.Cell(i + 2, 1).Value = items[i].Id;
                     worksheet.Cell(i + 2, 2).Value = items[i].Name;
-                    worksheet.Cell(i + 2, 3).Value = items[i].Brand;
+                    worksheet.Cell(i + 2, 3).Value = items[i].Brand.Name;
                     worksheet.Cell(i + 2, 4).Value = items[i].SerialId;
-                    worksheet.Cell(i + 2, 5).Value = items[i].Category;
-                    worksheet.Cell(i + 2, 6).Value = items[i].Status;
+                    worksheet.Cell(i + 2, 5).Value = items[i].Category.GetDisplayName();
+                    worksheet.Cell(i + 2, 6).Value = items[i].Status.GetDisplayName();
                     worksheet.Cell(i + 2, 7).Value = items[i].AddedDate;
-                    worksheet.Cell(i + 2, 8).Value = items[i].Address;
+                    worksheet.Cell(i + 2, 8).Value = $"{items[i].Address.Branch}, {items[i].Address.Building}, {items[i].Address.Floor}, {items[i].Address.Room}";
                 }
 
                 worksheet.Columns().AdjustToContents();
@@ -201,7 +201,7 @@ public class ItemService : IItemService
                     doc.InsertParagraph();
                 }
 
-                doc.InsertParagraph($"Статус ремонта: {repair.Status}").Bold();
+                doc.InsertParagraph($"Статус ремонта: {repair.Status.GetDisplayName()}").Bold();
                 doc.InsertParagraph();
 
                 doc.Save();
