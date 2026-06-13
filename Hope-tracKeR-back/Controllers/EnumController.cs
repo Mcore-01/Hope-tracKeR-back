@@ -38,7 +38,7 @@ public class EnumController : ControllerBase
         return BadRequest(result.Errors.First().Message);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("brand/{id}")]
     public async Task<ActionResult<BrandDto>> GetBrandById(int id)
     {
         var result = await _service.GetBrandById(id);
@@ -52,7 +52,7 @@ public class EnumController : ControllerBase
         return BadRequest(result.Errors.First().Message);
     }
 
-    [HttpPost("create")]
+    [HttpPost("create_brand")]
     public async Task<ActionResult<int>> CreateBrand([FromBody] BrandDto brand)
     {
         var result = await _service.CreateBrand(brand);
@@ -63,7 +63,7 @@ public class EnumController : ControllerBase
         return BadRequest(result.Errors.First().Message);
     }
 
-    [HttpPut("update")]
+    [HttpPut("update_brand")]
     public async Task<ActionResult> UpdateBrand([FromBody] BrandDto brand)
     {
         var result = await _service.UpdateBrand(brand);
@@ -77,7 +77,7 @@ public class EnumController : ControllerBase
         return BadRequest(result.Errors.First().Message);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("brand/{id}")]
     public async Task<ActionResult> RemoveBrand(int id)
     {
         var result = await _service.RemoveBrand(id);
