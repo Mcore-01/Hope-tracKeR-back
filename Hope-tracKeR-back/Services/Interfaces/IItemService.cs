@@ -1,5 +1,4 @@
 ﻿using FluentResults;
-using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 
@@ -12,4 +11,5 @@ public interface IItemService : IRepairService
     Task<Result<int>> CreateItem(ItemModify item);
     Task<Result> UpdateItem(ItemModify item);
     Task<Result> RemoveItem(int id);
+    Task<Result<Byte[]>> ExportItemsToExcel(ItemFilter filter);
 }

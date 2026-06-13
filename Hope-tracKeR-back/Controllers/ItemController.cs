@@ -1,4 +1,5 @@
-﻿using Hope_tracKeR_back.Models.DTOs.Requests;
+﻿using ClosedXML.Excel;
+using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -102,6 +103,20 @@ public class ItemController : ControllerBase
             return Ok();
 
         if (result.Errors.First().Message.Contains("Предмет не найден!"))
+            return NotFound(result.Errors.First().Message);
+
+        return BadRequest(result.Errors.First().Message);
+    }
+
+    [HttpPost("excel_items")]
+    public async Task<IActionResult> ExportItemToExcel([FromBody] ItemFilter filter)
+    {
+        var result = await _service.ExportItemsToExcel(filter);
+
+        if (result.IsSuccess)
+            return File(result.Value, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Список предметов.xlsx"); 
+
+        if (result.Errors.First().Message.Contains("Совпадений по фильтрам не найдено!"))
             return NotFound(result.Errors.First().Message);
 
         return BadRequest(result.Errors.First().Message);
