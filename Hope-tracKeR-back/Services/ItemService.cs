@@ -1,10 +1,13 @@
 ﻿using ClosedXML.Excel;
 using FluentResults;
+using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Hope_tracKeR_back.Services.Interfaces;
+using Xceed.Document.NET;
+using Xceed.Words.NET;
 
 namespace Hope_tracKeR_back.Services;
 
@@ -87,56 +90,128 @@ public class ItemService : IItemService
 
     public async Task<Result<byte[]>> ExportItemsToExcel(ItemFilter filter)
     {
-        var result = await _itemRepository.GetItemsByFilters(filter);
-
-        if (result.IsFailed)
-            return Result.Fail<byte[]>(result.Errors);
-
-        var items = result.Value.Select(MapToResponseDto).ToList();
-
-        if (items is null || items.Count == 0)
+        try
         {
-            return Result.Fail<byte[]>("Совпадений по фильтрам не найдено!");
-        }
+            var result = await _itemRepository.GetItemsByFilters(filter);
 
-        using (var workbook = new XLWorkbook())
-        {
-            var worksheet = workbook.Worksheets.Add("Brands");
+            if (result.IsFailed)
+                return Result.Fail<byte[]>(result.Errors);
 
-            worksheet.Cell(1, 1).Value = "Индентификатор в базе";
-            worksheet.Cell(1, 2).Value = "Наименование";
-            worksheet.Cell(1, 3).Value = "Бренд";
-            worksheet.Cell(1, 4).Value = "Серийный номер";
-            worksheet.Cell(1, 5).Value = "Категория";
-            worksheet.Cell(1, 6).Value = "Статус";
-            worksheet.Cell(1, 7).Value = "Добавлен в базу";
-            worksheet.Cell(1, 8).Value = "Адрес хранения";
+            var items = result.Value.Select(MapToResponseDto).ToList();
 
-            var headerRow = worksheet.Row(1);
-            headerRow.Style.Font.Bold = true;
-            headerRow.Style.Fill.BackgroundColor = XLColor.LightGray;
-            headerRow.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-
-
-            for (int i = 0; i < items.Count; i++)
+            if (items is null || items.Count == 0)
             {
-                worksheet.Cell(i + 2, 1).Value = items[i].Id;
-                worksheet.Cell(i + 2, 2).Value = items[i].Name;
-                worksheet.Cell(i + 2, 3).Value = items[i].Brand;
-                worksheet.Cell(i + 2, 4).Value = items[i].SerialId;
-                worksheet.Cell(i + 2, 5).Value = items[i].Category;
-                worksheet.Cell(i + 2, 6).Value = items[i].Status;
-                worksheet.Cell(i + 2, 7).Value = items[i].AddedDate;
-                worksheet.Cell(i + 2, 8).Value = items[i].Address;
+                return Result.Fail<byte[]>("Совпадений по фильтрам не найдено!");
             }
 
-            worksheet.Columns().AdjustToContents();
-
-            using (var stream = new MemoryStream())
+            using (var workbook = new XLWorkbook())
             {
+                var worksheet = workbook.Worksheets.Add("Brands");
+
+                worksheet.Cell(1, 1).Value = "Индентификатор в базе";
+                worksheet.Cell(1, 2).Value = "Наименование";
+                worksheet.Cell(1, 3).Value = "Бренд";
+                worksheet.Cell(1, 4).Value = "Серийный номер";
+                worksheet.Cell(1, 5).Value = "Категория";
+                worksheet.Cell(1, 6).Value = "Статус";
+                worksheet.Cell(1, 7).Value = "Добавлен в базу";
+                worksheet.Cell(1, 8).Value = "Адрес хранения";
+
+                var headerRow = worksheet.Row(1);
+                headerRow.Style.Font.Bold = true;
+                headerRow.Style.Fill.BackgroundColor = XLColor.LightGray;
+                headerRow.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+
+                for (int i = 0; i < items.Count; i++)
+                {
+                    worksheet.Cell(i + 2, 1).Value = items[i].Id;
+                    worksheet.Cell(i + 2, 2).Value = items[i].Name;
+                    worksheet.Cell(i + 2, 3).Value = items[i].Brand;
+                    worksheet.Cell(i + 2, 4).Value = items[i].SerialId;
+                    worksheet.Cell(i + 2, 5).Value = items[i].Category;
+                    worksheet.Cell(i + 2, 6).Value = items[i].Status;
+                    worksheet.Cell(i + 2, 7).Value = items[i].AddedDate;
+                    worksheet.Cell(i + 2, 8).Value = items[i].Address;
+                }
+
+                worksheet.Columns().AdjustToContents();
+
+                using var stream = new MemoryStream();
                 workbook.SaveAs(stream);
+
                 return Result.Ok<byte[]>(stream.ToArray());
             }
+        }
+        catch (Exception)
+        {
+            return Result.Fail<byte[]>(new Error("Произошла ошибка при генерации документа!"));
+        }
+    }
+
+    public async Task<Result<byte[]>> GenerateRepairActToDocx(int repairId)
+    {
+        try
+        {
+            var result = await _repairRepository.GetRepairById(repairId);
+
+            if (result.IsFailed)
+                return Result.Fail<byte[]>(result.Errors);
+
+            var repair = result.Value;
+
+            using var stream = new MemoryStream();
+
+            using (var doc = DocX.Create(stream))
+            {
+                doc.InsertParagraph("АКТ ПРИЕМА-ПЕРЕДАЧИ").FontSize(16).Bold().Alignment = Alignment.center;
+
+                doc.InsertParagraph("техники в ремонт").FontSize(14).Bold().Alignment = Alignment.center;
+
+                doc.InsertParagraph($"№ {repair.Id}").FontSize(14).Bold().Alignment = Alignment.center;
+                doc.InsertParagraph();
+
+                doc.InsertParagraph($"«{repair.StartDate:dd}» {repair.StartDate.Month.ToString().PadLeft(2, '0')} {repair.StartDate:yyyy} г.");
+                doc.InsertParagraph();
+
+                doc.InsertParagraph($"Текущее местоположение: {repair.Address.Branch}, {repair.Address.Building}, {repair.Address.Floor}, {repair.Address.Room}");
+                doc.InsertParagraph();
+
+                doc.InsertParagraph("Оборудование, передаваемое в ремонт:").Bold();
+
+                var table = doc.AddTable(2, 4);
+
+                table.Rows[0].Cells[0].Paragraphs.First().Append("Идентификатор отчета").Bold();
+                table.Rows[0].Cells[1].Paragraphs.First().Append("Наименование").Bold();
+                table.Rows[0].Cells[2].Paragraphs.First().Append("Серийный номер").Bold();
+                table.Rows[0].Cells[3].Paragraphs.First().Append("Неисправность").Bold();
+
+                table.Rows[1].Cells[0].Paragraphs.First().Append(repair.ItemId.ToString());
+                table.Rows[1].Cells[1].Paragraphs.First().Append(repair.Item.Name);
+                table.Rows[1].Cells[2].Paragraphs.First().Append(repair.Item.SerialId);
+                table.Rows[1].Cells[3].Paragraphs.First().Append(repair.Description);
+
+                doc.InsertTable(table);
+                doc.InsertParagraph();
+
+                if (!string.IsNullOrEmpty(repair.Diagnosis))
+                {
+                    doc.InsertParagraph("Результаты диагностики:").Bold();
+                    doc.InsertParagraph(repair.Diagnosis);
+                    doc.InsertParagraph();
+                }
+
+                doc.InsertParagraph($"Статус ремонта: {repair.Status}").Bold();
+                doc.InsertParagraph();
+
+                doc.Save();
+
+                return Result.Ok(stream.ToArray());
+            }
+        }
+        catch (Exception)
+        {
+            return Result.Fail<byte[]>(new Error("Произошла ошибка при генерации документа!"));
         }
     }
 }

@@ -43,7 +43,7 @@ public class RepairRepository : IRepairRepository
         }
         catch (Exception ex)
         {
-            return Result.Fail(new Error("Ошибка базы данных!").CausedBy(ex));
+            return Result.Fail(new Error("Ошибка базы данных!"));
         }
     }
 
@@ -74,7 +74,27 @@ public class RepairRepository : IRepairRepository
         }
         catch (Exception ex)
         {
-            return Result.Fail(new Error("Ошибка базы данных!").CausedBy(ex));
+            return Result.Fail(new Error("Ошибка базы данных!"));
+        }
+    }
+
+    public async Task<Result<Repair>> GetRepairById(int repairId)
+    {
+        try
+        {
+            var repair = await _context.Repairs
+                .Include(r => r.Item)
+                .Include(r => r.Address)
+                .FirstOrDefaultAsync(r => r.Id == repairId);
+
+            if (repair == default)
+                return Result.Fail<Repair>(new Error("Отчет о ремонте не найден!"));
+
+            return Result.Ok(repair);
+        }
+        catch (Exception)
+        {
+            return Result.Fail(new Error("Ошибка базы данных!"));
         }
     }
 }

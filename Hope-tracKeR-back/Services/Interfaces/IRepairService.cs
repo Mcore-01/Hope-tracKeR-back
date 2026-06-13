@@ -6,6 +6,7 @@ namespace Hope_tracKeR_back.Services.Interfaces;
 
 public interface IRepairService
 {
-    public Task<Result> StartRepairItem(StartRepairRequest repairRequest);
-    public Task<Result> CompleteRepairItem(CompleteRepairRequest repairRequest);
+    Task<Result> StartRepairItem(StartRepairRequest repairRequest);
+    Task<Result> CompleteRepairItem(CompleteRepairRequest repairRequest);
+    Task<Result<byte[]>> GenerateRepairActToDocx(int repairId);
 }

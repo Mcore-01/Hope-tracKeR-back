@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+﻿using Hope_tracKeR_back.Data;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Services.Interfaces;
@@ -11,6 +11,7 @@ namespace Hope_tracKeR_back.Controllers;
 public class ItemController : ControllerBase
 {
     private readonly IItemService _service;
+
     public ItemController(IItemService service)
     {
         _service = service;
@@ -114,9 +115,23 @@ public class ItemController : ControllerBase
         var result = await _service.ExportItemsToExcel(filter);
 
         if (result.IsSuccess)
-            return File(result.Value, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Список предметов.xlsx"); 
+            return File(result.Value, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Список_предметов.xlsx"); 
 
         if (result.Errors.First().Message.Contains("Совпадений по фильтрам не найдено!"))
+            return NotFound(result.Errors.First().Message);
+
+        return BadRequest(result.Errors.First().Message);
+    }
+
+    [HttpPost("repair_act/{repairId}")]
+    public async Task<IActionResult> GenerateRepairActDocx(int repairId)
+    {
+        var result = await _service.GenerateRepairActToDocx(repairId);
+
+        if (result.IsSuccess)
+            return File(result.Value, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"Акт_приема_передачи.docx");
+
+        if (result.Errors.First().Message.Contains("Отчет о ремонте не найден!"))
             return NotFound(result.Errors.First().Message);
 
         return BadRequest(result.Errors.First().Message);
