@@ -21,7 +21,7 @@ public class AddressRepository : ICatalogRepository<Address>
         if (isExist)
             throw new InvalidOperationException("Такой адрес существует");
 
-        await _context.Brands.AddAsync(address);
+        await _context.Addresses.AddAsync(address);
         await _context.SaveChangesAsync();
 
         return address.Id;
