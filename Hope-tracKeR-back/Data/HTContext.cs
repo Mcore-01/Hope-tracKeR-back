@@ -15,6 +15,10 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Brand>()
+        .HasIndex(b => b.Name)
+        .IsUnique();
+
         modelBuilder.Entity<Brand>().HasData(
             new Brand { Id = 1, Name = "Samsung" },
             new Brand { Id = 2, Name = "Dexp" },

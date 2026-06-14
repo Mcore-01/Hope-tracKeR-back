@@ -1,5 +1,6 @@
 using Hope_tracKeR_back.Config;
 using Hope_tracKeR_back.Data;
+using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Hope_tracKeR_back.Services;
@@ -11,12 +12,13 @@ var services = builder.Services;
 services.AddDbContext<HTContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-services.AddScoped<IBrandRepository, BrandRepository>();
+services.AddScoped<ICatalogRepository<Brand>, BrandRepository>();
+services.AddScoped<ICatalogRepository<Address>, AddressRepository>();
 services.AddScoped<IItemRepository, ItemRepository>();
-services.AddScoped<IAddressRepository, AddressRepository>();
 services.AddScoped<IRepairRepository, RepairRepository>();
 services.AddScoped<IUserRepository, UserRepository>();
-services.AddScoped<IEnumService, EnumService>();
+services.AddScoped<ICatalogService<Brand>, BrandService>();
+services.AddScoped<ICatalogService<Address>, AddressService>();
 services.AddScoped<IItemService, ItemService>();
 services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAuthorization();
