@@ -26,12 +26,17 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
             new Brand { Id = 4, Name = "Logitech" }
         );
 
+        modelBuilder.Entity<Employee>().HasData(
+            new Employee { Id = 1, FullName = "Петров А.А.", Staff = "Врач" },
+            new Employee { Id = 2, FullName = "Сидоров С.С.", Staff = "Заведующий хоз. товарами" },
+            new Employee { Id = 3, FullName = "Иванов Д.Д.", Staff = "Мастер над монетой" }
+        ); 
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FullName = "Рустам Вордович", Login = "word365", Password = "21232F297A57A5A743894A0E4A801FC3", Role = UserRole.Admin },
-            new User { Id = 2, FullName = "Родион Экселович", Login = "excel2003", Password = "21232F297A57A5A743894A0E4A801FC3", Role = UserRole.Admin },
-            new User { Id = 3, FullName = "Моисей Шарпович", Login = "sharp3000", Password = "21232F297A57A5A743894A0E4A801FC3", Role = UserRole.Admin },
-            new User { Id = 4, FullName = "Михаил Реактович", Login = "react2026", Password = "21232F297A57A5A743894A0E4A801FC3", Role = UserRole.Admin },
-            new User { Id = 5, FullName = "Кирилл TracKeR", Login = "legenda212", Password = "8C728E685DDDE9F7FBBC452155E29639", Role = UserRole.Employee }
+            new User { Id = 1, FullName = "Рустам Вордович", Login = "word365", Password = "21232F297A57A5A743894A0E4A801FC3" },
+            new User { Id = 2, FullName = "Родион Экселович", Login = "excel2003", Password = "21232F297A57A5A743894A0E4A801FC3" },
+            new User { Id = 3, FullName = "Моисей Шарпович", Login = "sharp3000", Password = "21232F297A57A5A743894A0E4A801FC3" },
+            new User { Id = 4, FullName = "Михаил Реактович", Login = "react2026", Password = "21232F297A57A5A743894A0E4A801FC3" },
+            new User { Id = 5, FullName = "Кирилл TracKeR", Login = "legenda212", Password = "8C728E685DDDE9F7FBBC452155E29639" }
         );
 
         modelBuilder.Entity<Address>().HasData(
@@ -67,6 +72,7 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
 
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Address> Addresses { get; set; }
+    public DbSet<Employee> Employees { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<ItemAttribute> ItemAttributes { get; set; }
