@@ -52,12 +52,12 @@ public class EmployeeRepository : ICatalogRepository<Employee>
 
     public async Task Update(Employee employee)
     {
-        var existingEmployee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == employee.Id);
+        var employeeIsExist = _context.Employees.Any(e => e.Id == employee.Id);
 
-        if (existingEmployee == default)
+        if (!employeeIsExist)
             throw new NullReferenceException($"Объект с ID {employee.Id} не найден!");
 
-        _context.Employees.Update(existingEmployee);
+        _context.Employees.Update(employee);
 
         await _context.SaveChangesAsync();
     }

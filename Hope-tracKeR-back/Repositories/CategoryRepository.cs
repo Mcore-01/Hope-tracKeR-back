@@ -58,9 +58,9 @@ public class CategoryRepository : ICatalogRepository<Category>
         if (_context.Categories.Any(c => c.Name == category.Name))
             throw new InvalidOperationException($"Создать объект не удалось, так как категории с названием {category.Name} уже существует!");
 
-        var existingCategory = await _context.Categories.FirstOrDefaultAsync(с => с.Id == category.Id);
+        var categoryIsExist = _context.Categories.Any(с => с.Id == category.Id);
 
-        if (existingCategory == default)
+        if (!categoryIsExist)
             throw new NullReferenceException($"Объект с ID {category.Id} не найден!");
         
         _context.Categories.Update(category);

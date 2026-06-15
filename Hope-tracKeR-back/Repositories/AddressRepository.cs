@@ -63,9 +63,9 @@ public class AddressRepository : ICatalogRepository<Address>
         if (isExist)
             throw new InvalidOperationException("Такой адрес существует");
 
-        var existingAddress = await _context.Addresses.FirstOrDefaultAsync(b => b.Id == address.Id);
+        var addressIsExist = _context.Addresses.Any(b => b.Id == address.Id);
 
-        if (existingAddress == default)
+        if (!addressIsExist)
             throw new NullReferenceException($"Объект с ID {address.Id} не найден!");
 
         _context.Addresses.Update(address);

@@ -49,12 +49,12 @@ public class BrandRepository : ICatalogRepository<Brand>
         if(_context.Brands.Any(b => b.Name == brand.Name))
             throw new InvalidOperationException($"Создать объект не удалось, так как бренд с названием {brand.Name} уже существует!");
 
-        var existingBrand = await _context.Brands.FirstOrDefaultAsync(b => b.Id == brand.Id);
+        var brandIsExist = _context.Brands.Any(b => b.Id == brand.Id);
 
-        if (existingBrand == default)
+        if (!brandIsExist)
             throw new NullReferenceException($"Объект с ID {brand.Id} не найден!");
 
-        existingBrand.Name = brand.Name;
+        _context.Brands.Update(brand);
 
         await _context.SaveChangesAsync();
     }
