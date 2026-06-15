@@ -1,5 +1,8 @@
-﻿using Hope_tracKeR_back.Models.DTOs.Requests;
+﻿using Hope_tracKeR_back.Controllers.Interfaces;
+using Hope_tracKeR_back.Errors;
+using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
+using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,24 +10,24 @@ namespace Hope_tracKeR_back.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class DeviceController : ControllerBase
+public class DeviceController : ControllerBase, IItemController<DeviceRequest, ItemFilter, DeviceResponse>
 {
-    private readonly IItemService _service;
+    private readonly IItemService<DeviceRequest, ItemFilter, DeviceResponse> _service;
 
-    public DeviceController(IItemService service)
+    public DeviceController(IItemService<DeviceRequest, ItemFilter, DeviceResponse> service)
     {
         _service = service;
     }
 
     [HttpPost("devices")]
-    public async Task<ActionResult<IEnumerable<DeviceResponse>>> GetAll([FromBody] ItemFilter filter)
+    public async Task<ActionResult<IEnumerable<DeviceResponse>>> GetByFilters([FromBody] ItemFilter filter)
     {
         var result = await _service.GetByFilters(filter);
 
         if (result.IsSuccess)
             return Ok(result.Value);
 
-        return BadRequest(result.Errors.First().Message);
+        return StatusCode(500, result.Errors.First().Message);
     }
 
     [HttpGet("{id}")]
@@ -35,33 +38,45 @@ public class DeviceController : ControllerBase
         if (result.IsSuccess)
             return Ok(result.Value);
 
-        if (result.Errors.First().Message.Contains("Предмет не найден!"))
+        if (result.Errors.First() is NotFoundError)
             return NotFound(result.Errors.First().Message);
 
         return BadRequest(result.Errors.First().Message);
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<int>> Create([FromBody] DeviceModify item)
+    public async Task<ActionResult<int>> Create([FromBody] DeviceRequest item)
     {
         var result = await _service.Create(item);
 
         if (result.IsSuccess)
             return Ok(result.Value);
 
+        if (result.Errors.First() is ValidationError)
+            return BadRequest(result.Errors.First().Message);
+
+        if (result.Errors.First() is InvalidOperationError)
+            return Conflict(result.Errors.First().Message);
+
         return BadRequest(result.Errors.First().Message);
     }
 
     [HttpPut("update")]
-    public async Task<ActionResult> Update([FromBody] DeviceModify item)
+    public async Task<ActionResult> Update([FromBody] DeviceRequest item)
     {
         var result = await _service.Update(item);
 
         if (result.IsSuccess)
             return Ok();
 
-        if (result.Errors.First().Message.Contains("Предмет не найден!"))
+        if (result.Errors.First() is NotFoundError)
             return NotFound(result.Errors.First().Message);
+
+        if (result.Errors.First() is ValidationError)
+            return BadRequest(result.Errors.First().Message);
+
+        if (result.Errors.First() is InvalidOperationError)
+            return Conflict(result.Errors.First().Message);
 
         return BadRequest(result.Errors.First().Message);
     }
@@ -74,7 +89,7 @@ public class DeviceController : ControllerBase
         if (result.IsSuccess)
             return Ok();
 
-        if (result.Errors.First().Message.Contains("Предмет не найден!"))
+        if (result.Errors.First() is NotFoundError)
             return NotFound(result.Errors.First().Message);
 
         return BadRequest(result.Errors.First().Message);

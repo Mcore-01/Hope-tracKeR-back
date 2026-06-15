@@ -3,7 +3,7 @@ using Hope_tracKeR_back.Models.DTOs.Requests;
 
 namespace Hope_tracKeR_back.Validators.Requests;
 
-public class DeviceModifyValidator : AbstractValidator<DeviceModify>
+public class DeviceModifyValidator : AbstractValidator<DeviceRequest>
 {
     public DeviceModifyValidator()
     {

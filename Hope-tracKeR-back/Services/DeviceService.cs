@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Office2016.Excel;
 using FluentResults;
 using FluentValidation;
 using Hope_tracKeR_back.Enums;
@@ -15,13 +14,13 @@ using Xceed.Words.NET;
 
 namespace Hope_tracKeR_back.Services;
 
-public class DeviceService : IItemService
+public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceResponse>
 {
     private readonly IItemRepository<Device, ItemFilter> _repository;
     private readonly IMapper _mapper;
-    private readonly IValidator<DeviceModify> _validator;
+    private readonly IValidator<DeviceRequest> _validator;
     private readonly IRepairRepository _repairRepository;
-    public DeviceService(IItemRepository<Device, ItemFilter> itemRepository, IMapper mapper, IValidator<DeviceModify> validator, IRepairRepository repairRepository)
+    public DeviceService(IItemRepository<Device, ItemFilter> itemRepository, IMapper mapper, IValidator<DeviceRequest> validator, IRepairRepository repairRepository)
     {
         _repository = itemRepository;
         _mapper = mapper;
@@ -35,7 +34,9 @@ public class DeviceService : IItemService
         {
             var items = await _repository.GetByFilters(filter);
 
-            return Result.Ok(items.Select(MapToResponseDto));
+            var itemsResponse = _mapper.Map<IEnumerable<DeviceResponse>>(items);
+
+            return Result.Ok(itemsResponse);
         }
         catch (Exception ex)
         {
@@ -52,7 +53,9 @@ public class DeviceService : IItemService
             if (item is null)
                 return Result.Fail<DeviceResponse>(new NotFoundError(nameof(Device), id));
 
-            return Result.Ok(MapToResponseDto(item));
+            var itemResponse = _mapper.Map<DeviceResponse>(item);
+
+            return Result.Ok(itemResponse);
         }
         catch (Exception ex)
         {
@@ -60,7 +63,7 @@ public class DeviceService : IItemService
         }
     }
 
-    public async Task<Result<int>> Create(DeviceModify itemModify)
+    public async Task<Result<int>> Create(DeviceRequest itemModify)
     {
         try
         {
@@ -87,7 +90,7 @@ public class DeviceService : IItemService
         }
     }
 
-    public async Task<Result> Update(DeviceModify itemModify)
+    public async Task<Result> Update(DeviceRequest itemModify)
     {
         try
         {
@@ -134,23 +137,6 @@ public class DeviceService : IItemService
         {
             return Result.Fail(new Error($"Произошла ошибка: {ex.Message}"));
         }
-    }
-
-    public DeviceResponse MapToResponseDto(Device item)
-    {
-        return new DeviceResponse
-        {
-            Id = item.Id,
-            Name = item.Name,
-            SerialId = item.SerialNumber,
-            Status = item.Status.GetDisplayName(),
-            AddedDate = item.AddedDate,
-            AddressId = item.AddressId,
-            Address = $"{item.Address.Branch}, {item.Address.Building}, {item.Address.Floor}, {item.Address.Room}",
-            BrandId = item.BrandId,
-            Brand = item.Brand.Name,
-            Attributes = item.Attributes.ToDictionary(a => a.Name, a => a.Value)
-        };
     }
 
     public async Task<Result> StartRepairItem(StartRepairRequest repairRequest)
