@@ -63,13 +63,43 @@ public class AddressService : ICatalogService<Address>
         }
     }
 
-    public Task<Result> Remove(int id)
+    public async Task<Result> Remove(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _repository.Remove(id);
+
+            return Result.Ok();
+        }
+        catch (NullReferenceException ex)
+        {
+            return Result.Fail(new NotFoundError(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error($"Произошла ошибка: {ex.Message}"));
+        }
     }
 
-    public Task<Result> Update(Address address)
+    public async Task<Result> Update(Address address)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _repository.Update(address);
+
+            return Result.Ok();
+        }
+        catch (NullReferenceException ex)
+        {
+            return Result.Fail(new NotFoundError(ex.Message));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Result.Fail(new InvalidOperationError(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error($"Произошла ошибка: {ex.Message}"));
+        }
     }
 }

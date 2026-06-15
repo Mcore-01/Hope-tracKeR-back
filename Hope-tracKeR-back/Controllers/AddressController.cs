@@ -1,6 +1,6 @@
 ﻿using Hope_tracKeR_back.Controllers.Interfaces;
+using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.Entities;
-using Hope_tracKeR_back.Repositories.Interfaces;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,20 +42,47 @@ public class AddressController : ControllerBase, ICatalogController<Address>
     }
 
     [HttpPost("create")]
-    public Task<ActionResult<int>> Create([FromBody] Address value)
+    public async Task<ActionResult<int>> Create([FromBody] Address address)
     {
-        throw new NotImplementedException();
+        var result = await _service.Create(address);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        if (result.Errors.First() is InvalidOperationError)
+            return Conflict(result.Errors.First().Message);
+
+        return BadRequest(result.Errors.First().Message);
     }
 
     [HttpPut("update")]
-    public Task<ActionResult> Update([FromBody] Address value)
+    public async Task<ActionResult> Update([FromBody] Address address)
     {
-        throw new NotImplementedException();
+        var result = await _service.Update(address);
+
+        if (result.IsSuccess)
+            return Ok();
+
+        if (result.Errors.First() is NotFoundError)
+            return NotFound(result.Errors.First().Message);
+
+        if (result.Errors.First() is InvalidOperationError)
+            return Conflict(result.Errors.First().Message);
+
+        return BadRequest(result.Errors.First().Message);
     }
 
     [HttpDelete("{id}")]
-    public Task<ActionResult> Remove(int id)
+    public async Task<ActionResult> Remove(int id)
     {
-        throw new NotImplementedException();
+        var result = await _service.Remove(id);
+
+        if (result.IsSuccess)
+            return Ok();
+
+        if (result.Errors.First() is NotFoundError)
+            return NotFound(result.Errors.First().Message);
+
+        return BadRequest(result.Errors.First().Message);
     }
 }
