@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using FluentValidation;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
@@ -9,9 +10,11 @@ namespace Hope_tracKeR_back.Services;
 public class AddressService : ICatalogService<Address>
 {
     private readonly ICatalogRepository<Address> _repository;
-    public AddressService(ICatalogRepository<Address> repository)
+    private readonly IValidator<Address> _validator;
+    public AddressService(ICatalogRepository<Address> repository, IValidator<Address> validator)
     {
         _repository = repository;
+        _validator = validator;
     }
 
     public async Task<Result<IEnumerable<Address>>> GetAll()
@@ -49,6 +52,13 @@ public class AddressService : ICatalogService<Address>
     {
         try
         {
+            var validationResult = await _validator.ValidateAsync(address);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join("\n", validationResult.Errors);
+                return Result.Fail(new ValidationError(errors));
+            }
+
             var addressId = await _repository.Create(address);
 
             return Result.Ok(addressId);
@@ -85,6 +95,13 @@ public class AddressService : ICatalogService<Address>
     {
         try
         {
+            var validationResult = await _validator.ValidateAsync(address);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join("\n", validationResult.Errors);
+                return Result.Fail(new ValidationError(errors));
+            }
+
             await _repository.Update(address);
 
             return Result.Ok();

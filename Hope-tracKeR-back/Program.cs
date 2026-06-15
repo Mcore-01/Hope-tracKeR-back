@@ -15,6 +15,7 @@ services.AddDbContext<HTContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 services.AddValidatorsFromAssemblyContaining<BrandValidator>();
+services.AddValidatorsFromAssemblyContaining<AddressValidator>();
 services.AddScoped<ICatalogRepository<Brand>, BrandRepository>();
 services.AddScoped<ICatalogRepository<Address>, AddressRepository>();
 services.AddScoped<IItemRepository, ItemRepository>();
