@@ -16,8 +16,8 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Brand>()
-        .HasIndex(b => b.Name)
-        .IsUnique();
+            .HasIndex(b => b.Name)
+            .IsUnique();
 
         modelBuilder.Entity<Brand>().HasData(
             new Brand { Id = 1, Name = "Samsung" },
@@ -54,12 +54,10 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
         );
 
         modelBuilder.Entity<Device>().HasData(
-            new Device { Id = 1, Name = "Монитор Samsung Odyssey", SerialId = "SAMS-OD-001", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 1, 15, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 1 },
-            new Device { Id = 2, Name = "Ноутбук LG Gram", SerialId = "LG-GRAM-002", Status = DeviceStatus.Issued, AddedDate = new DateTime(2024, 2, 10, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 3 },
-            new Device { Id = 3, Name = "Клавиатура Logitech MX", SerialId = "LOG-MX-003", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 3, 5, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 4 },
-            new Device { Id = 4, Name = "Бумага A4 500л", SerialId = "PAP-A4-004", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 3, 20, 0, 0, 0, DateTimeKind.Utc), AddressId = 3, BrandId = 2 },
-            new Device { Id = 5, Name = "Картридж для принтера", SerialId = "CRTG-005", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 4, 1, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 1 },
-            new Device { Id = 6, Name = "USB Flash Drive 32GB", SerialId = "USB-32-006", Status = DeviceStatus.Repair, AddedDate = new DateTime(2024, 1, 25, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 2 }
+            new Device { Id = 1, Name = "Монитор Samsung Odyssey", SerialNumber = "SAMS-OD-001", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 1, 15, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 1, CategoryId = 1 },
+            new Device { Id = 2, Name = "Ноутбук LG Gram", SerialNumber = "LG-GRAM-002", Status = DeviceStatus.Issued, AddedDate = new DateTime(2024, 2, 10, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 3, CategoryId = 2 },
+            new Device { Id = 3, Name = "Моноблок Logitech MX", SerialNumber = "LOG-MX-003", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 3, 5, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 4, CategoryId = 4 },
+            new Device { Id = 5, Name = "Картридж для принтера", SerialNumber = "CRTG-005", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 4, 1, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 1, CategoryId = 3 }
         );
 
         modelBuilder.Entity<ItemAttribute>().HasData(

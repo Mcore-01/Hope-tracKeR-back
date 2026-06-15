@@ -1,6 +1,7 @@
 using FluentValidation;
 using Hope_tracKeR_back.Config;
 using Hope_tracKeR_back.Data;
+using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories;
 using Hope_tracKeR_back.Repositories.Interfaces;
@@ -14,6 +15,7 @@ var services = builder.Services;
 services.AddDbContext<HTContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+services.AddAutoMapper(typeof(Program));
 services.AddValidatorsFromAssemblyContaining<BrandValidator>();
 services.AddValidatorsFromAssemblyContaining<AddressValidator>();
 services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
@@ -22,7 +24,7 @@ services.AddScoped<ICatalogRepository<Brand>, BrandRepository>();
 services.AddScoped<ICatalogRepository<Address>, AddressRepository>();
 services.AddScoped<ICatalogRepository<Employee>, EmployeeRepository>();
 services.AddScoped<ICatalogRepository<Category>, CategoryRepository>();
-services.AddScoped<IItemRepository, DeviceRepository>();
+services.AddScoped<IItemRepository<Device, ItemFilter>, DeviceRepository>();
 services.AddScoped<IRepairRepository, RepairRepository>();
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<ICatalogService<Brand>, BrandService>();

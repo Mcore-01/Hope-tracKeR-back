@@ -42,7 +42,7 @@ public class DeviceController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<int>> Create([FromBody] DeviceModifyRequest item)
+    public async Task<ActionResult<int>> Create([FromBody] DeviceModify item)
     {
         var result = await _service.CreateItem(item);
 
@@ -53,7 +53,7 @@ public class DeviceController : ControllerBase
     }
 
     [HttpPut("update")]
-    public async Task<ActionResult> Update([FromBody] DeviceModifyRequest item)
+    public async Task<ActionResult> Update([FromBody] DeviceModify item)
     {
         var result = await _service.Update(item);
 

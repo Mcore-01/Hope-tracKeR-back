@@ -1,15 +1,12 @@
-﻿using FluentResults;
-using Hope_tracKeR_back.Models.DTOs.Requests;
-using Hope_tracKeR_back.Models.Entities;
-
+﻿
 namespace Hope_tracKeR_back.Repositories.Interfaces
 {
-    public interface IItemRepository
+    public interface IItemRepository<T, TFilter>
     {
-        Task<Result<IEnumerable<Device>>> GetByFilters(ItemFilter filter);
-        Task<Result<Device>> GetById(int id);
-        Task<Result<int>> Create(DeviceModifyRequest item);
-        Task<Result> Update(DeviceModifyRequest item);
-        Task<Result> Remove(int id);
+        Task<IEnumerable<T>> GetByFilters(TFilter filter);
+        Task<T> GetById(int id);
+        Task<int> Create(T Value);
+        Task Update(T value);
+        Task Remove(int id);
     }
 }
