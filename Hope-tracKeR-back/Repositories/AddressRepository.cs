@@ -45,11 +45,31 @@ public class AddressRepository : ICatalogRepository<Address>
 
     public async Task Remove(int id)
     {
-        throw new NotImplementedException();
+        var existingAddress = await _context.Addresses.FirstOrDefaultAsync(a => a.Id == id);
+
+        if (existingAddress == default)
+            throw new NullReferenceException($"Объект с ID {id} не найден!");
+
+        _context.Addresses.Remove(existingAddress);
+
+        await _context.SaveChangesAsync();
     }
 
-    public async Task Update(Address value)
+    public async Task Update(Address address)
     {
-        throw new NotImplementedException();
+        var isExist = _context.Addresses.Any(a => a.Branch == address.Branch
+            && a.Building == address.Building && a.Floor == address.Floor && a.Room == address.Room);
+
+        if (isExist)
+            throw new InvalidOperationException("Такой адрес существует");
+
+        var existingAddress = await _context.Addresses.FirstOrDefaultAsync(b => b.Id == address.Id);
+
+        if (existingAddress == default)
+            throw new NullReferenceException($"Объект с ID {address.Id} не найден!");
+
+        _context.Addresses.Update(address);
+
+        await _context.SaveChangesAsync();
     }
 }
