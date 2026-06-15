@@ -26,7 +26,6 @@ public class BrandService : ICatalogService<Brand>
         {
             return Result.Fail<IEnumerable<Brand>>(new Error($"Произошла ошибка: {ex.Message}"));
         }
-        
     }
 
     public async Task<Result<Brand>> GetById(int id)

@@ -1,34 +1,66 @@
 ﻿using FluentResults;
+using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.Entities;
+using Hope_tracKeR_back.Repositories.Interfaces;
 using Hope_tracKeR_back.Services.Interfaces;
 
 namespace Hope_tracKeR_back.Services;
 
 public class AddressService : ICatalogService<Address>
 {
-    public Task<Result<int>> Create(Address value)
+    private readonly ICatalogRepository<Address> _repository;
+    public AddressService(ICatalogRepository<Address> repository)
     {
-        throw new NotImplementedException();
+        _repository = repository;
     }
 
-    /*public async Task<Result<IEnumerable<AddressResponse>>> GetAllAddresses()
+    public async Task<Result<IEnumerable<Address>>> GetAll()
     {
-        var result = await _addressRepository.GetAllAddresses();
+        try
+        {
+            var addresses = await _repository.GetAll();
 
-        if (result.IsFailed)
-            return Result.Fail<IEnumerable<AddressResponse>>(result.Errors);
-
-        return Result.Ok(result.Value.Select(a => new AddressResponse() { Id = a.Id, Branch = a.Branch, Building = a.Building, Floor = a.Floor, Room = a.Room }));
-    }*/
-
-    public Task<Result<IEnumerable<Address>>> GetAll()
-    {
-        throw new NotImplementedException();
+            return Result.Ok(addresses);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<IEnumerable<Address>>(new Error($"Произошла ошибка: {ex.Message}"));
+        }
     }
 
-    public Task<Result<Address>> GetById(int id)
+    public async Task<Result<Address>> GetById(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var address = await _repository.GetById(id);
+
+            if (address is null)
+                return Result.Fail<Address>(new NotFoundError(nameof(Brand), id));
+
+            return Result.Ok(address);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<Address>(new Error($"Произошла ошибка: {ex.Message}"));
+        }
+    }
+
+    public async Task<Result<int>> Create(Address address)
+    {
+        try
+        {
+            var addressId = await _repository.Create(address);
+
+            return Result.Ok(addressId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Result.Fail<int>(new InvalidOperationError(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<int>(new Error($"Произошла ошибка: {ex.Message}"));
+        }
     }
 
     public Task<Result> Remove(int id)
@@ -36,7 +68,7 @@ public class AddressService : ICatalogService<Address>
         throw new NotImplementedException();
     }
 
-    public Task<Result> Update(Address value)
+    public Task<Result> Update(Address address)
     {
         throw new NotImplementedException();
     }
