@@ -38,7 +38,7 @@ public class AddressService : ICatalogService<Address>
             var address = await _repository.GetById(id);
 
             if (address is null)
-                return Result.Fail<Address>(new NotFoundError(nameof(Brand), id));
+                return Result.Fail<Address>(new NotFoundError(nameof(Address), id));
 
             return Result.Ok(address);
         }
