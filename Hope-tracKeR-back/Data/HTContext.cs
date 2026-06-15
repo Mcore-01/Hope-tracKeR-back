@@ -26,11 +26,19 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
             new Brand { Id = 4, Name = "Logitech" }
         );
 
+        modelBuilder.Entity<Category>().HasData(
+            new Category { Id = 1, Name = "Монитор" },
+            new Category { Id = 2, Name = "Ноутбук" },
+            new Category { Id = 3, Name = "Картридж" },
+            new Category { Id = 4, Name = "Моноблок" }
+        );
+
         modelBuilder.Entity<Employee>().HasData(
             new Employee { Id = 1, FullName = "Петров А.А.", Staff = "Врач" },
             new Employee { Id = 2, FullName = "Сидоров С.С.", Staff = "Заведующий хоз. товарами" },
             new Employee { Id = 3, FullName = "Иванов Д.Д.", Staff = "Мастер над монетой" }
         ); 
+
         modelBuilder.Entity<User>().HasData(
             new User { Id = 1, FullName = "Рустам Вордович", Login = "word365", Password = "21232F297A57A5A743894A0E4A801FC3" },
             new User { Id = 2, FullName = "Родион Экселович", Login = "excel2003", Password = "21232F297A57A5A743894A0E4A801FC3" },
@@ -77,4 +85,5 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
     public DbSet<Item> Items { get; set; }
     public DbSet<ItemAttribute> ItemAttributes { get; set; }
     public DbSet<Repair> Repairs { get; set; }
+    public DbSet<Category> Categories { get; set; }
 }
