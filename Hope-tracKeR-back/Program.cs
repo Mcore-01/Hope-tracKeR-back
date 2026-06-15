@@ -1,3 +1,4 @@
+using FluentValidation;
 using Hope_tracKeR_back.Config;
 using Hope_tracKeR_back.Data;
 using Hope_tracKeR_back.Models.Entities;
@@ -5,6 +6,7 @@ using Hope_tracKeR_back.Repositories;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Hope_tracKeR_back.Services;
 using Hope_tracKeR_back.Services.Interfaces;
+using Hope_tracKeR_back.Validators;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,7 @@ var services = builder.Services;
 services.AddDbContext<HTContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+services.AddValidatorsFromAssemblyContaining<BrandValidator>();
 services.AddScoped<ICatalogRepository<Brand>, BrandRepository>();
 services.AddScoped<ICatalogRepository<Address>, AddressRepository>();
 services.AddScoped<IItemRepository, ItemRepository>();

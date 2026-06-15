@@ -51,6 +51,9 @@ public class BrandController : ControllerBase, ICatalogController<Brand>
         if (result.IsSuccess)
             return Ok(result.Value);
 
+        if (result.Errors.First() is ValidationError)
+            return BadRequest(result.Errors.First().Message);
+
         if (result.Errors.First() is InvalidOperationError)
             return Conflict(result.Errors.First().Message);
 
@@ -67,6 +70,9 @@ public class BrandController : ControllerBase, ICatalogController<Brand>
 
         if (result.Errors.First() is NotFoundError)
             return NotFound(result.Errors.First().Message);
+
+        if (result.Errors.First() is ValidationError)
+            return BadRequest(result.Errors.First().Message);
 
         if (result.Errors.First() is InvalidOperationError)
             return Conflict(result.Errors.First().Message);

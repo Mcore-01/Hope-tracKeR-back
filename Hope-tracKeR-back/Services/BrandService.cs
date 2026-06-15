@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using FluentValidation;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
@@ -9,9 +10,11 @@ namespace Hope_tracKeR_back.Services;
 public class BrandService : ICatalogService<Brand>
 {
     private readonly ICatalogRepository<Brand> _repository;
-    public BrandService(ICatalogRepository<Brand> repository)
+    private readonly IValidator<Brand> _validator;
+    public BrandService(ICatalogRepository<Brand> repository, IValidator<Brand> validator)
     {
         _repository = repository;
+        _validator = validator;
     }
     
     public async Task<Result<IEnumerable<Brand>>> GetAll()
@@ -49,6 +52,13 @@ public class BrandService : ICatalogService<Brand>
     {
         try
         {
+            var validationResult = await _validator.ValidateAsync(brand);   
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join("\n", validationResult.Errors);
+                return Result.Fail<int>(new ValidationError(errors));
+            }
+
             var brandId = await _repository.Create(brand);
 
             return Result.Ok(brandId);
@@ -67,6 +77,13 @@ public class BrandService : ICatalogService<Brand>
     {
         try
         {
+            var validationResult = await _validator.ValidateAsync(brand);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join("\n", validationResult.Errors);
+                return Result.Fail(new ValidationError(errors));
+            }
+
             await _repository.Update(brand);
 
             return Result.Ok();
