@@ -2,7 +2,7 @@
 
 namespace Hope_tracKeR_back.Enums;
 
-public enum ItemStatus
+public enum DeviceStatus
 {
     [Display(Name = "В наличии")]
     InStock,
@@ -11,5 +11,7 @@ public enum ItemStatus
     [Display(Name = "Выдан")]
     Issued,
     [Display(Name = "Сломан")]
-    Broken
+    Broken,
+    [Display(Name = "Списан")]
+    WriteOff
 }

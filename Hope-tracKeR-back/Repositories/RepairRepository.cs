@@ -20,11 +20,11 @@ public class RepairRepository : IRepairRepository
     {
         try
         {
-            var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == repairRequest.ItemId);
+            var existingItem = await _context.Devices.FirstOrDefaultAsync(i => i.Id == repairRequest.ItemId);
             if(existingItem == default)
                 return Result.Fail(new Error("Предмет не найден!"));
 
-            existingItem.Status = ItemStatus.Repair;
+            existingItem.Status = DeviceStatus.Repair;
             existingItem.AddressId = repairRequest.CurrentAddressId;
 
             var repair = new Repair()
@@ -51,11 +51,11 @@ public class RepairRepository : IRepairRepository
     {
         try
         {
-            var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == repairRequest.ItemId);
+            var existingItem = await _context.Devices.FirstOrDefaultAsync(i => i.Id == repairRequest.ItemId);
             if (existingItem == default)
                 return Result.Fail(new Error("Предмет не найден!"));
 
-            existingItem.Status = ItemStatus.InStock;
+            existingItem.Status = DeviceStatus.InStock;
             existingItem.AddressId = repairRequest.CurrentAddressId;
 
             var existingRepair = await _context.Repairs.FirstOrDefaultAsync(r => r.ItemId == repairRequest.ItemId && r.EndDate == null);

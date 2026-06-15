@@ -11,60 +11,59 @@ using Xceed.Words.NET;
 
 namespace Hope_tracKeR_back.Services;
 
-public class ItemService : IItemService
+public class DeviceService : IItemService
 {
-    private readonly IItemRepository _itemRepository;
+    private readonly IItemRepository _deviceRepository;
     private readonly IRepairRepository _repairRepository;
-    public ItemService(IItemRepository itemRepository, IRepairRepository repairRepository)
+    public DeviceService(IItemRepository itemRepository, IRepairRepository repairRepository)
     {
-        _itemRepository = itemRepository;
+        _deviceRepository = itemRepository;
         _repairRepository = repairRepository;
     }
 
-    public async Task<Result<IEnumerable<ItemResponse>>> GetItemsByFilters(ItemFilter filter)
+    public async Task<Result<IEnumerable<DeviceResponse>>> GetByFilters(ItemFilter filter)
     {
-        var result = await _itemRepository.GetItemsByFilters(filter);
+        var result = await _deviceRepository.GetByFilters(filter);
 
         if (result.IsFailed)
-            return Result.Fail<IEnumerable<ItemResponse>>(result.Errors);
+            return Result.Fail<IEnumerable<DeviceResponse>>(result.Errors);
 
         return Result.Ok(result.Value.Select(MapToResponseDto));
     }
 
-    public async Task<Result<ItemResponse>> GetItemById(int id)
+    public async Task<Result<DeviceResponse>> GetById(int id)
     {
-        var result = await _itemRepository.GetItemById(id);
+        var result = await _deviceRepository.GetById(id);
 
         if (result.IsFailed)
-            return Result.Fail<ItemResponse>(result.Errors);
+            return Result.Fail<DeviceResponse>(result.Errors);
         
         return Result.Ok(MapToResponseDto(result.Value));
     }
 
-    public async Task<Result<int>> CreateItem(ItemModify item)
+    public async Task<Result<int>> CreateItem(DeviceModifyRequest item)
     {
-        return await _itemRepository.CreateItem(item);
+        return await _deviceRepository.Create(item);
     }
 
-    public async Task<Result> UpdateItem(ItemModify item)
+    public async Task<Result> Update(DeviceModifyRequest item)
     {
-        return await _itemRepository.UpdateItem(item);
+        return await _deviceRepository.Update(item);
     }
 
-    public async Task<Result> RemoveItem(int id)
+    public async Task<Result> Remove(int id)
     {
-        return await (_itemRepository.RemoveItem(id));  
+        return await (_deviceRepository.Remove(id));  
     }
 
-    public ItemResponse MapToResponseDto(Item item)
+    public DeviceResponse MapToResponseDto(Device item)
     {
-        return new ItemResponse
+        return new DeviceResponse
         {
             Id = item.Id,
             Name = item.Name,
             SerialId = item.SerialId,
-            Category = item.Category.ToString(),
-            Status = item.Status.ToString(),
+            Status = item.Status.GetDisplayName(),
             AddedDate = item.AddedDate,
             AddressId = item.AddressId,
             Address = $"{item.Address.Branch}, {item.Address.Building}, {item.Address.Floor}, {item.Address.Room}",
@@ -81,18 +80,18 @@ public class ItemService : IItemService
         return result;
     }
 
-    public async Task<Result> CompleteRepairItem(CompleteRepairRequest repairRequest)
+    public async Task<Result> CompleteRepair(CompleteRepairRequest repairRequest)
     {
         var result = await _repairRepository.CompleteRepair(repairRequest);
 
         return result;
     }
 
-    public async Task<Result<byte[]>> ExportItemsToExcel(ItemFilter filter)
+    public async Task<Result<byte[]>> ExportDevicesToExcel(ItemFilter filter)
     {
         try
         {
-            var result = await _itemRepository.GetItemsByFilters(filter);
+            var result = await _deviceRepository.GetByFilters(filter);
 
             if (result.IsFailed)
                 return Result.Fail<byte[]>(result.Errors);
@@ -129,7 +128,6 @@ public class ItemService : IItemService
                     worksheet.Cell(i + 2, 2).Value = items[i].Name;
                     worksheet.Cell(i + 2, 3).Value = items[i].Brand.Name;
                     worksheet.Cell(i + 2, 4).Value = items[i].SerialId;
-                    worksheet.Cell(i + 2, 5).Value = items[i].Category.GetDisplayName();
                     worksheet.Cell(i + 2, 6).Value = items[i].Status.GetDisplayName();
                     worksheet.Cell(i + 2, 7).Value = items[i].AddedDate;
                     worksheet.Cell(i + 2, 8).Value = $"{items[i].Address.Branch}, {items[i].Address.Building}, {items[i].Address.Floor}, {items[i].Address.Room}";

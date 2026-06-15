@@ -8,19 +8,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hope_tracKeR_back.Repositories;
 
-public class ItemRepository : IItemRepository
+public class DeviceRepository : IItemRepository
 {
     private readonly HTContext _context;
-    public ItemRepository(HTContext context)
+    public DeviceRepository(HTContext context)
     {
         _context = context;
     }
 
-    public async Task<Result<IEnumerable<Item>>> GetItemsByFilters(ItemFilter filter)
+    public async Task<Result<IEnumerable<Device>>> GetByFilters(ItemFilter filter)
     {
         try
         {
-            var query = _context.Items
+            var query = _context.Devices
             .Include(i => i.Address)
             .Include(i => i.Brand)
             .Include(i => i.Attributes)
@@ -31,9 +31,6 @@ public class ItemRepository : IItemRepository
                 var searchField = filter.SearchField.ToLower();
                 query = query.Where(i => i.Name.ToLower().Contains(searchField) || i.SerialId.ToLower().Contains(searchField));
             }
-
-            if (filter.Category.HasValue)
-                query = query.Where(i => i.Category == filter.Category.Value);
 
             if (filter.Status.HasValue)
                 query = query.Where(i => i.Status == filter.Status.Value);
@@ -59,51 +56,50 @@ public class ItemRepository : IItemRepository
             }
 
             var items = await query.ToListAsync();
-            return Result.Ok<IEnumerable<Item>>(items);
+            return Result.Ok<IEnumerable<Device>>(items);
         }
         catch (Exception ex)
         {
-            return Result.Fail<IEnumerable<Item>>(new Error("Ошибка базы данных!").CausedBy(ex));
+            return Result.Fail<IEnumerable<Device>>(new Error("Ошибка базы данных!").CausedBy(ex));
         }
     }
 
-    public async Task<Result<Item>> GetItemById(int id)
+    public async Task<Result<Device>> GetById(int id)
     {
         try
         {
-            var item = await _context.Items
+            var item = await _context.Devices
             .Include(i => i.Address)
             .Include(i => i.Brand)
             .Include(i => i.Attributes)
             .FirstOrDefaultAsync(i => i.Id == id);
             if (item != default)
-                return Result.Ok<Item>(item);
+                return Result.Ok<Device>(item);
 
-            return Result.Fail<Item>(new Error("Предмет не найден!"));
+            return Result.Fail<Device>(new Error("Предмет не найден!"));
         }
         catch (Exception ex)
         {
-            return Result.Fail<Item>(new Error("Ошибка базы данных!").CausedBy(ex));
+            return Result.Fail<Device>(new Error("Ошибка базы данных!").CausedBy(ex));
         }
     }
 
-    public async Task<Result<int>> CreateItem(ItemModify item)
+    public async Task<Result<int>> Create(DeviceModifyRequest item)
     {
         try
         {
-            var newItem = new Item
+            var newItem = new Device
             {
                 Name = item.Name,
                 SerialId = item.SerialId,
-                Category = Enum.Parse<ItemCategory>(item.Category),
-                Status = Enum.Parse<ItemStatus>(item.Status),
+                Status = Enum.Parse<DeviceStatus>(item.Status),
                 AddedDate = item.AddedDate,
                 AddressId = item.AddressId,
                 BrandId = item.BrandId,
                 Attributes = item.Attributes.Select(a => new ItemAttribute { Name = a.Key, Value = a.Value }).ToList()
             };
 
-            _context.Items.Add(newItem);
+            _context.Devices.Add(newItem);
 
             await _context.SaveChangesAsync();
 
@@ -115,12 +111,12 @@ public class ItemRepository : IItemRepository
         }
     }
 
-    public async Task<Result> UpdateItem(ItemModify item)
+    public async Task<Result> Update(DeviceModifyRequest item)
     {
         
         try
         {
-            var existingItem = await _context.Items.Include(i => i.Attributes).FirstOrDefaultAsync(i => i.Id == item.Id);
+            var existingItem = await _context.Devices.Include(i => i.Attributes).FirstOrDefaultAsync(i => i.Id == item.Id);
 
             if (existingItem == default)
                 return Result.Fail(new Error("Предмет не найден!"));
@@ -130,8 +126,7 @@ public class ItemRepository : IItemRepository
             existingItem.AddedDate = item.AddedDate;
             existingItem.AddressId = item.AddressId;
             existingItem.BrandId = item.BrandId;
-            existingItem.Category = Enum.Parse<ItemCategory>(item.Category);
-            existingItem.Status = Enum.Parse<ItemStatus>(item.Status);
+            existingItem.Status = Enum.Parse<DeviceStatus>(item.Status);
 
             _context.ItemAttributes.RemoveRange(existingItem.Attributes);
 
@@ -146,16 +141,16 @@ public class ItemRepository : IItemRepository
             return Result.Fail($"Ошибка модификации предмета: {ex.Message}");
         }
     }
-    public async Task<Result> RemoveItem(int id)
+    public async Task<Result> Remove(int id)
     {
         try
         {
-            var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == id);
+            var existingItem = await _context.Devices.FirstOrDefaultAsync(i => i.Id == id);
 
             if (existingItem == default)
                 return Result.Fail((new Error("Предмет не найден!")));
 
-            _context.Items.Remove(existingItem);
+            _context.Devices.Remove(existingItem);
 
             await _context.SaveChangesAsync();
 
@@ -164,27 +159,6 @@ public class ItemRepository : IItemRepository
         catch (Exception ex)
         {
             return Result.Fail($"Ошибка удаления предмета: {ex.Message}");
-        }
-    }
-
-    public async Task<Result> ChangeStatus(int id, ItemStatus status)
-    {
-        try
-        {
-            var existingItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == id);
-
-            if (existingItem == default)
-                return Result.Fail((new Error("Предмет не найден!")));
-
-            existingItem.Status = status;
-
-            await _context.SaveChangesAsync();
-
-            return Result.Ok();
-        }
-        catch (Exception ex)
-        {
-            return Result.Fail($"Ошибка изменения статуса предмета: {ex.Message}");
         }
     }
 }

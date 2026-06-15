@@ -1,5 +1,4 @@
-﻿using Hope_tracKeR_back.Data;
-using Hope_tracKeR_back.Models.DTOs.Requests;
+﻿using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -8,19 +7,19 @@ namespace Hope_tracKeR_back.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ItemController : ControllerBase
+public class DeviceController : ControllerBase
 {
     private readonly IItemService _service;
 
-    public ItemController(IItemService service)
+    public DeviceController(IItemService service)
     {
         _service = service;
     }
 
-    [HttpPost("items")]
-    public async Task<ActionResult<IEnumerable<ItemResponse>>> GetAllItems([FromBody] ItemFilter filter)
+    [HttpPost("devices")]
+    public async Task<ActionResult<IEnumerable<DeviceResponse>>> GetAll([FromBody] ItemFilter filter)
     {
-        var result = await _service.GetItemsByFilters(filter);
+        var result = await _service.GetByFilters(filter);
 
         if (result.IsSuccess)
             return Ok(result.Value);
@@ -29,9 +28,9 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ItemResponse>> GetItemById(int id)
+    public async Task<ActionResult<DeviceResponse>> GetById(int id)
     {
-        var result = await _service.GetItemById(id);
+        var result = await _service.GetById(id);
 
         if (result.IsSuccess)
             return Ok(result.Value);
@@ -43,7 +42,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<int>> CreateItem([FromBody] ItemModify item)
+    public async Task<ActionResult<int>> Create([FromBody] DeviceModifyRequest item)
     {
         var result = await _service.CreateItem(item);
 
@@ -54,9 +53,9 @@ public class ItemController : ControllerBase
     }
 
     [HttpPut("update")]
-    public async Task<ActionResult> UpdateItem([FromBody] ItemModify item)
+    public async Task<ActionResult> Update([FromBody] DeviceModifyRequest item)
     {
-        var result = await _service.UpdateItem(item);
+        var result = await _service.Update(item);
 
         if (result.IsSuccess)
             return Ok();
@@ -68,9 +67,9 @@ public class ItemController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> RemoveItem(int id)
+    public async Task<ActionResult> Remove(int id)
     {
-        var result = await _service.RemoveItem(id);
+        var result = await _service.Remove(id);
 
         if (result.IsSuccess)
             return Ok();
@@ -82,7 +81,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost("start_repair")]
-    public async Task<ActionResult> StartRepairItem([FromBody] StartRepairRequest repair)
+    public async Task<ActionResult> StartRepairDevice([FromBody] StartRepairRequest repair)
     {
         var result = await _service.StartRepairItem(repair);
 
@@ -96,9 +95,9 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost("end_repair")]
-    public async Task<ActionResult> CompleteRepairItem([FromBody] CompleteRepairRequest repair)
+    public async Task<ActionResult> CompleteRepair([FromBody] CompleteRepairRequest repair)
     {
-        var result = await _service.CompleteRepairItem(repair);
+        var result = await _service.CompleteRepair(repair);
 
         if (result.IsSuccess)
             return Ok();
@@ -110,9 +109,9 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost("excel_items")]
-    public async Task<IActionResult> ExportItemToExcel([FromBody] ItemFilter filter)
+    public async Task<IActionResult> ExportIDevicesToExcel([FromBody] ItemFilter filter)
     {
-        var result = await _service.ExportItemsToExcel(filter);
+        var result = await _service.ExportDevicesToExcel(filter);
 
         if (result.IsSuccess)
             return File(result.Value, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Список_предметов.xlsx"); 

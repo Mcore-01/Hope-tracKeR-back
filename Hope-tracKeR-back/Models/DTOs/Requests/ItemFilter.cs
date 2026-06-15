@@ -5,9 +5,7 @@ namespace Hope_tracKeR_back.Models.DTOs.Requests;
 public class ItemFilter
 {
     public string? SearchField { get; set; }  
-    public ItemCategory? Category { get; set; }
-    public ItemStatus? Status { get; set; }
-
+    public DeviceStatus? Status { get; set; }
     public DateTime? AddedDateFrom { get; set; }
     public DateTime? AddedDateTo { get; set; }
 

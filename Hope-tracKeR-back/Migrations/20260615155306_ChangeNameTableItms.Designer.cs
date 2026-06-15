@@ -3,6 +3,7 @@ using System;
 using Hope_tracKeR_back.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hope_tracKeR_back.Migrations
 {
     [DbContext(typeof(HTContext))]
-    partial class HTContextModelSnapshot : ModelSnapshot
+    [Migration("20260615155306_ChangeNameTableItms")]
+    partial class ChangeNameTableItms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -524,6 +527,9 @@ namespace Hope_tracKeR_back.Migrations
                     b.Property<DateTime>("AddedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Category")
+                        .HasColumnType("integer");
+
                     b.Property<string>("SerialId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -541,6 +547,7 @@ namespace Hope_tracKeR_back.Migrations
                             BrandId = 1,
                             Name = "Монитор Samsung Odyssey",
                             AddedDate = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Category = 0,
                             SerialId = "SAMS-OD-001",
                             Status = 0
                         },
@@ -551,6 +558,7 @@ namespace Hope_tracKeR_back.Migrations
                             BrandId = 3,
                             Name = "Ноутбук LG Gram",
                             AddedDate = new DateTime(2024, 2, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Category = 0,
                             SerialId = "LG-GRAM-002",
                             Status = 2
                         },
@@ -561,6 +569,7 @@ namespace Hope_tracKeR_back.Migrations
                             BrandId = 4,
                             Name = "Клавиатура Logitech MX",
                             AddedDate = new DateTime(2024, 3, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Category = 0,
                             SerialId = "LOG-MX-003",
                             Status = 0
                         },
@@ -571,6 +580,7 @@ namespace Hope_tracKeR_back.Migrations
                             BrandId = 2,
                             Name = "Бумага A4 500л",
                             AddedDate = new DateTime(2024, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Category = 1,
                             SerialId = "PAP-A4-004",
                             Status = 0
                         },
@@ -581,6 +591,7 @@ namespace Hope_tracKeR_back.Migrations
                             BrandId = 1,
                             Name = "Картридж для принтера",
                             AddedDate = new DateTime(2024, 4, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Category = 1,
                             SerialId = "CRTG-005",
                             Status = 0
                         },
@@ -591,6 +602,7 @@ namespace Hope_tracKeR_back.Migrations
                             BrandId = 2,
                             Name = "USB Flash Drive 32GB",
                             AddedDate = new DateTime(2024, 1, 25, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Category = 1,
                             SerialId = "USB-32-006",
                             Status = 1
                         });

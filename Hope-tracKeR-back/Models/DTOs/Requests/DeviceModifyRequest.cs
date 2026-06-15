@@ -1,6 +1,6 @@
 ﻿namespace Hope_tracKeR_back.Models.DTOs.Requests
 {
-    public class ItemModify
+    public class DeviceModifyRequest
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;

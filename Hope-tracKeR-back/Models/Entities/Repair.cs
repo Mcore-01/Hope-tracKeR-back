@@ -11,7 +11,7 @@ public class Repair
     public string? Diagnosis { get; set; }
     public RepairStatus Status { get; set; }
     public int ItemId { get; set; }
-    public Item Item { get; set; } = null!;
+    public Device Item { get; set; } = null!;
     public int AddressId { get; set; }
     public Address Address { get; set; } = null!;
 }
