@@ -44,7 +44,7 @@ public class DeviceController : ControllerBase
     [HttpPost("create")]
     public async Task<ActionResult<int>> Create([FromBody] DeviceModify item)
     {
-        var result = await _service.CreateItem(item);
+        var result = await _service.Create(item);
 
         if (result.IsSuccess)
             return Ok(result.Value);

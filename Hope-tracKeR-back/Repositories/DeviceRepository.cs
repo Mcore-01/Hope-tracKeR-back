@@ -86,7 +86,7 @@ public class DeviceRepository : IItemRepository<Device, ItemFilter>
         if (!itemIsExist)
             throw new NullReferenceException($"Объект с ID {item.Id} не найден!");
         
-        _context.Devices.Remove(item);
+        _context.Devices.Update(item);
 
         await _context.SaveChangesAsync();
     }

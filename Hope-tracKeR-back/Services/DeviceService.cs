@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office2016.Excel;
 using FluentResults;
 using FluentValidation;
 using Hope_tracKeR_back.Enums;
@@ -59,7 +60,7 @@ public class DeviceService : IItemService
         }
     }
 
-    public async Task<Result<int>> CreateItem(DeviceModify itemModify)
+    public async Task<Result<int>> Create(DeviceModify itemModify)
     {
         try
         {
