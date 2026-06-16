@@ -36,6 +36,7 @@ services.AddScoped<ICatalogService<Category>, CategoryService>();
 services.AddScoped<IItemService<DeviceRequest, ItemFilter, DeviceResponse>, DeviceService>();
 services.AddScoped<IAuthService, AuthService>();
 services.AddAuthorization();
+services.ConfigureCors();
 services.ConfigureAuthentication();
 services.AddSwaggerGen();
 services.AddControllers();
@@ -49,6 +50,7 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("Development");
     app.UseSwagger();
     app.UseSwaggerUI();
 }
