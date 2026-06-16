@@ -21,12 +21,16 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
     private readonly IMapper _mapper;
     private readonly IValidator<DeviceRequest> _validator;
     private readonly IValidator<StartRepairRequest> _startRepairValidator;
-    public DeviceService(IItemRepository<Device, ItemFilter> itemRepository, IMapper mapper, IValidator<DeviceRequest> validator, IValidator<StartRepairRequest> startRepairValidator, IRepairRepository repairRepository)
+    private readonly IValidator<CompleteRepairRequest> _completeRepairValidator;
+    public DeviceService(IItemRepository<Device, ItemFilter> itemRepository, 
+        IMapper mapper, IValidator<DeviceRequest> validator, IValidator<StartRepairRequest> startRepairValidator,
+        IValidator<CompleteRepairRequest> completeRepairValidator, IRepairRepository repairRepository)
     {
         _repository = itemRepository;
         _mapper = mapper;
         _validator = validator;
         _startRepairValidator = startRepairValidator;   
+        _completeRepairValidator = completeRepairValidator;
         _repairRepository = repairRepository;
     }
 
@@ -161,7 +165,7 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
 
             await _repository.Update(item);
 
-            var itemId = await _repairRepository.CreateRepair(repair);
+            var itemId = await _repairRepository.Create(repair);
 
             return Result.Ok(itemId);
         }
@@ -177,9 +181,43 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
 
     public async Task<Result> CompleteRepair(CompleteRepairRequest repairRequest)
     {
-        var result = await _repairRepository.CompleteRepair(repairRequest);
+        try
+        {
+            var validationResult = await _completeRepairValidator.ValidateAsync(repairRequest);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join("\n", validationResult.Errors);
+                return Result.Fail(new ValidationError(errors));
+            }
 
-        return result;
+            var item = await _repository.GetById(repairRequest.UserId);
+            var repair = await _repairRepository.GetRepairByItemId(repairRequest.UserId);
+
+            repair.Status = RepairStatus.Completed;
+            repair.EndDate = repairRequest.EndDate;
+            repair.Diagnosis = repairRequest.Diagnosis;
+            repair.AddressId = repairRequest.CurrentAddressId;
+
+            item.AddressId = repairRequest.CurrentAddressId;
+            item.Status = DeviceStatus.InStock;
+
+            await _repository.Update(item);
+            await _repairRepository.Update(repair); 
+
+            return Result.Ok();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Result.Fail(new InvalidOperationError(ex.Message));
+        }
+        catch (NullReferenceException ex)
+        {
+            return Result.Fail(new NotFoundError(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error($"Произошла ошибка: {ex.Message}"));
+        }
     }
 
     public async Task<Result<byte[]>> ExportDevicesToExcel(ItemFilter filter)
@@ -244,12 +282,7 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
     {
         try
         {
-            var result = await _repairRepository.GetRepairById(repairId);
-
-            if (result.IsFailed)
-                return Result.Fail<byte[]>(result.Errors);
-
-            var repair = result.Value;
+            var repair = await _repairRepository.GetRepairByItemId(repairId);
 
             using var stream = new MemoryStream();
 
@@ -287,12 +320,14 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
 
                 if (!string.IsNullOrEmpty(repair.Diagnosis))
                 {
-                    doc.InsertParagraph("Результаты диагностики:").Bold();
-                    doc.InsertParagraph(repair.Diagnosis);
+                    doc.InsertParagraph($"Результаты диагностики: {repair.Diagnosis}").Bold();
                     doc.InsertParagraph();
                 }
 
                 doc.InsertParagraph($"Статус ремонта: {repair.Status.GetDisplayName()}").Bold();
+                doc.InsertParagraph();
+
+                doc.InsertParagraph($"Ответственный за ремонт: {repair.User.FullName}").Bold();
                 doc.InsertParagraph();
 
                 doc.Save();
@@ -300,9 +335,13 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
                 return Result.Ok(stream.ToArray());
             }
         }
+        catch (NullReferenceException ex)
+        {
+            return Result.Fail(new NotFoundError(ex.Message));
+        }
         catch (Exception)
         {
-            return Result.Fail<byte[]>(new Error("Произошла ошибка при генерации документа!"));
+            return Result.Fail(new Error("Произошла ошибка при генерации документа!"));
         }
     }
 }

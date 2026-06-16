@@ -6,5 +6,5 @@ public class CompleteRepairRequest
     public int CurrentAddressId { get; set; }
     public int UserId { get; set; }
     public string Diagnosis { get; set; } = null!;
-    public DateTime EndDate { get; set; }
+    public DateTime EndDate { get; set; } = DateTime.Now;
 }

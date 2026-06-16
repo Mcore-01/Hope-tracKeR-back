@@ -136,10 +136,10 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
         return BadRequest(result.Errors.First().Message);
     }
 
-    [HttpPost("repair_act/{repairId}")]
-    public async Task<IActionResult> GenerateRepairActDocx(int repairId)
+    [HttpPost("repair_act/{itemID}")]
+    public async Task<IActionResult> GenerateRepairActDocx(int itemID)
     {
-        var result = await _service.GenerateRepairActToDocx(repairId);
+        var result = await _service.GenerateRepairActToDocx(itemID);
 
         if (result.IsSuccess)
             return File(result.Value, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"Акт_приема_передачи.docx");

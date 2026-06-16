@@ -47,7 +47,7 @@ public class BrandRepository : ICatalogRepository<Brand>
     public async Task Update(Brand brand)
     {
         if(_context.Brands.Any(b => b.Name == brand.Name))
-            throw new InvalidOperationException($"Создать объект не удалось, так как бренд с названием {brand.Name} уже существует!");
+            throw new InvalidOperationException($"Обновить объект не удалось, так как бренд с названием {brand.Name} уже существует!");
 
         var brandIsExist = _context.Brands.Any(b => b.Id == brand.Id);
 

@@ -1,7 +1,6 @@
-﻿using FluentResults;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using FluentResults;
 using Hope_tracKeR_back.Data;
-using Hope_tracKeR_back.Enums;
-using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,7 @@ public class RepairRepository : IRepairRepository
         _context = context;
     }
 
-    public  async Task<int> CreateRepair(Repair repair)
+    public  async Task<int> Create(Repair repair)
     {
         _context.Repairs.Add(repair);
 
@@ -25,54 +24,29 @@ public class RepairRepository : IRepairRepository
         return repair.Id;
     }
 
-    public async Task<Result> CompleteRepair(CompleteRepairRequest repairRequest)
+    public async Task Update(Repair repair)
     {
-        try
-        {
-            var existingItem = await _context.Devices.FirstOrDefaultAsync(i => i.Id == repairRequest.ItemId);
-            if (existingItem == default)
-                return Result.Fail(new Error("Предмет не найден!"));
+        var repairIsExist = _context.Repairs.Any(r => r.Id == repair.Id);
+        if (!repairIsExist)
+            throw new NullReferenceException($"Объект с ID {repair.Id} не найден!");
 
-            existingItem.Status = DeviceStatus.InStock;
-            existingItem.AddressId = repairRequest.CurrentAddressId;
+        _context.Repairs.Update(repair);
 
-            var existingRepair = await _context.Repairs.FirstOrDefaultAsync(r => r.ItemId == repairRequest.ItemId && r.EndDate == null);
-            if (existingRepair == default)
-                return Result.Fail(new Error("Предмет отсуствует в перечне ремонта!"));
-
-            existingRepair.EndDate = repairRequest.EndDate;
-            existingRepair.Status = RepairStatus.Completed;
-            existingRepair.Diagnosis = repairRequest.Diagnosis;
-            existingRepair.ItemId = repairRequest.ItemId;
-            existingRepair.AddressId = repairRequest.CurrentAddressId;
-
-            await _context.SaveChangesAsync();
-
-            return Result.Ok();
-        }
-        catch (Exception ex)
-        {
-            return Result.Fail(new Error("Ошибка базы данных!"));
-        }
+        await _context.SaveChangesAsync();
     }
 
-    public async Task<Result<Repair>> GetRepairById(int repairId)
+    public async Task<Repair> GetRepairByItemId(int itemId)
     {
-        try
-        {
-            var repair = await _context.Repairs
-                .Include(r => r.Item)
-                .Include(r => r.Address)
-                .FirstOrDefaultAsync(r => r.Id == repairId);
+        var repair = await _context.Repairs
+            .Include(r => r.Item)
+            .Include(r => r.Address)
+            .Include(r => r.User)
+            .OrderBy(r => r.StartDate)
+            .LastOrDefaultAsync(r => r.ItemId == itemId);
 
-            if (repair == default)
-                return Result.Fail<Repair>(new Error("Отчет о ремонте не найден!"));
+        if (repair == default)
+            throw new NullReferenceException($"Объект с ID {itemId} не найден!");
 
-            return Result.Ok(repair);
-        }
-        catch (Exception)
-        {
-            return Result.Fail(new Error("Ошибка базы данных!"));
-        }
+        return repair;
     }
 }
