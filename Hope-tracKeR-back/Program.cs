@@ -1,6 +1,7 @@
 using FluentValidation;
 using Hope_tracKeR_back.Config;
 using Hope_tracKeR_back.Data;
+using Hope_tracKeR_back.Middlewares;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Models.Entities;
@@ -51,6 +52,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<LogMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
