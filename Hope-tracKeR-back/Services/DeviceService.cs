@@ -356,7 +356,7 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
 
             var writeOff = new WriteOff
             {
-                Date = DateTime.Now,
+                Date = DateTime.UtcNow,
                 ItemId = item.Id,
                 UserId = userId
             };

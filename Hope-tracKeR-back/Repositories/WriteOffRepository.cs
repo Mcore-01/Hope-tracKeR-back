@@ -14,7 +14,7 @@ public class WriteOffRepository : IWriteOffRepository
 
     public async Task<int> Create(WriteOff write)
     {
-        _context.WriteOffs.Add(write);
+        await _context.WriteOffs.AddAsync(write);
         await _context.SaveChangesAsync();
 
         return write.Id;
