@@ -17,14 +17,16 @@ namespace Hope_tracKeR_back.Services;
 public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceResponse>
 {
     private readonly IItemRepository<Device, ItemFilter> _repository;
+    private readonly IRepairRepository _repairRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<DeviceRequest> _validator;
-    private readonly IRepairRepository _repairRepository;
-    public DeviceService(IItemRepository<Device, ItemFilter> itemRepository, IMapper mapper, IValidator<DeviceRequest> validator, IRepairRepository repairRepository)
+    private readonly IValidator<StartRepairRequest> _startRepairValidator;
+    public DeviceService(IItemRepository<Device, ItemFilter> itemRepository, IMapper mapper, IValidator<DeviceRequest> validator, IValidator<StartRepairRequest> startRepairValidator, IRepairRepository repairRepository)
     {
         _repository = itemRepository;
         _mapper = mapper;
         _validator = validator;
+        _startRepairValidator = startRepairValidator;   
         _repairRepository = repairRepository;
     }
 
@@ -139,11 +141,38 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
         }
     }
 
-    public async Task<Result> StartRepairItem(StartRepairRequest repairRequest)
+    public async Task<Result<int>> StartRepair(StartRepairRequest repairRequest)
     {
-        var result = await _repairRepository.CreateRepair(repairRequest);
+        try
+        {
+            var validationResult = await _startRepairValidator.ValidateAsync(repairRequest);
+            if (!validationResult.IsValid)
+            {
+                var errors = string.Join("\n", validationResult.Errors);
+                return Result.Fail<int>(new ValidationError(errors));
+            }
 
-        return result;
+            var repair = _mapper.Map<Repair>(repairRequest);
+            repair.Status = RepairStatus.InProgress;
+
+            var item = await _repository.GetById(repair.ItemId);
+            item.Status = DeviceStatus.Repair;
+            item.AddressId = repair.AddressId;
+
+            await _repository.Update(item);
+
+            var itemId = await _repairRepository.CreateRepair(repair);
+
+            return Result.Ok(itemId);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Result.Fail<int>(new InvalidOperationError(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<int>(new Error($"Произошла ошибка: {ex.Message}"));
+        }
     }
 
     public async Task<Result> CompleteRepair(CompleteRepairRequest repairRequest)

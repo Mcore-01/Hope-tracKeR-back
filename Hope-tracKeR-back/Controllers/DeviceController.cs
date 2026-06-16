@@ -97,12 +97,12 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
     [HttpPost("start_repair")]
     public async Task<ActionResult> StartRepairDevice([FromBody] StartRepairRequest repair)
     {
-        var result = await _service.StartRepairItem(repair);
+        var result = await _service.StartRepair(repair);
 
         if (result.IsSuccess)
             return Ok();
 
-        if (result.Errors.First().Message.Contains("Предмет не найден!"))
+        if (result.Errors.First() is NotFoundError)
             return NotFound(result.Errors.First().Message);
 
         return BadRequest(result.Errors.First().Message);
@@ -116,7 +116,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
         if (result.IsSuccess)
             return Ok();
 
-        if (result.Errors.First().Message.Contains("Предмет не найден!"))
+        if (result.Errors.First() is NotFoundError)
             return NotFound(result.Errors.First().Message);
 
         return BadRequest(result.Errors.First().Message);

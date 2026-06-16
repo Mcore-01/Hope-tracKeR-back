@@ -16,35 +16,13 @@ public class RepairRepository : IRepairRepository
         _context = context;
     }
 
-    public  async Task<Result> CreateRepair(StartRepairRequest repairRequest)
+    public  async Task<int> CreateRepair(Repair repair)
     {
-        try
-        {
-            var existingItem = await _context.Devices.FirstOrDefaultAsync(i => i.Id == repairRequest.ItemId);
-            if(existingItem == default)
-                return Result.Fail(new Error("Предмет не найден!"));
+        _context.Repairs.Add(repair);
 
-            existingItem.Status = DeviceStatus.Repair;
-            existingItem.AddressId = repairRequest.CurrentAddressId;
+        await _context.SaveChangesAsync();
 
-            var repair = new Repair()
-            {
-                StartDate = repairRequest.StartDate,
-                Description = repairRequest.DescriptionFailure,
-                Status = RepairStatus.InProgress,
-                ItemId = repairRequest.ItemId,
-                AddressId = repairRequest.CurrentAddressId,
-            };
-            _context.Repairs.Add(repair);
-
-            await _context.SaveChangesAsync();
-            
-            return Result.Ok();
-        }
-        catch (Exception ex)
-        {
-            return Result.Fail(new Error("Ошибка базы данных!"));
-        }
+        return repair.Id;
     }
 
     public async Task<Result> CompleteRepair(CompleteRepairRequest repairRequest)

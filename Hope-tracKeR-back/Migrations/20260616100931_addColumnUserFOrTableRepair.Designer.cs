@@ -3,6 +3,7 @@ using System;
 using Hope_tracKeR_back.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hope_tracKeR_back.Migrations
 {
     [DbContext(typeof(HTContext))]
-    partial class HTContextModelSnapshot : ModelSnapshot
+    [Migration("20260616100931_addColumnUserFOrTableRepair")]
+    partial class addColumnUserFOrTableRepair
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -376,7 +379,7 @@ namespace Hope_tracKeR_back.Migrations
                             ItemId = 1,
                             StartDate = new DateTime(2025, 5, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 1,
-                            UserId = 1
+                            UserId = 0
                         },
                         new
                         {
@@ -387,7 +390,7 @@ namespace Hope_tracKeR_back.Migrations
                             ItemId = 2,
                             StartDate = new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 0,
-                            UserId = 1
+                            UserId = 0
                         },
                         new
                         {
@@ -398,7 +401,7 @@ namespace Hope_tracKeR_back.Migrations
                             ItemId = 3,
                             StartDate = new DateTime(2025, 5, 25, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 0,
-                            UserId = 1
+                            UserId = 0
                         },
                         new
                         {
@@ -410,7 +413,7 @@ namespace Hope_tracKeR_back.Migrations
                             ItemId = 6,
                             StartDate = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 1,
-                            UserId = 1
+                            UserId = 0
                         },
                         new
                         {
@@ -421,7 +424,7 @@ namespace Hope_tracKeR_back.Migrations
                             ItemId = 1,
                             StartDate = new DateTime(2025, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 0,
-                            UserId = 1
+                            UserId = 0
                         },
                         new
                         {
@@ -432,7 +435,7 @@ namespace Hope_tracKeR_back.Migrations
                             ItemId = 2,
                             StartDate = new DateTime(2025, 6, 3, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = 0,
-                            UserId = 1
+                            UserId = 0
                         });
                 });
 

@@ -6,5 +6,5 @@ public class StartRepairRequest
     public int CurrentAddressId { get; set; }
     public int UserId { get; set; }
     public string DescriptionFailure { get; set; } = null!;
-    public DateTime StartDate { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Now;
 }

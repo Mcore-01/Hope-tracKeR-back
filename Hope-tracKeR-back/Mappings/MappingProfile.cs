@@ -24,5 +24,14 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name))
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Branch}, {src.Address.Building}, {src.Address.Floor}, {src.Address.Room}"))
             .ForMember(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.ToDictionary(a => a.Name, a => a.Value)));
+
+        CreateMap<StartRepairRequest, Repair>()
+            .ForMember(dest => dest.Address, opt => opt.Ignore())
+            .ForMember(dest => dest.Item, opt => opt.Ignore())
+            .ForMember(dest => dest.User, opt => opt.Ignore())
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
+            .ForMember(dest => dest.Diagnosis, opt => opt.Ignore())
+            .ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.CurrentAddressId))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.DescriptionFailure));
     }
 }

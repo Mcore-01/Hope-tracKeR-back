@@ -12,6 +12,8 @@ public class Repair
     public RepairStatus Status { get; set; }
     public int ItemId { get; set; }
     public Device Item { get; set; } = null!;
+    public int UserId { get; set; }
+    public User User { get; set; } = null!;
     public int AddressId { get; set; }
     public Address Address { get; set; } = null!;
 }
