@@ -2,7 +2,6 @@
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
-using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

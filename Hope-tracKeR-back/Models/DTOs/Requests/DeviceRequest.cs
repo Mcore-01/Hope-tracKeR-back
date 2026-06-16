@@ -6,7 +6,7 @@
         public string Name { get; set; } = null!;
         public string SerialNumber { get; set; } = string.Empty;
         public string Status { get; set; } = null!;
-        public DateTime AddedDate { get; set; }
+        public DateTime AddedDate { get; set; } = DateTime.UtcNow;
         public int AddressId { get; set; }
         public int BrandId { get; set; }
         public int CategoryId { get; set; }
