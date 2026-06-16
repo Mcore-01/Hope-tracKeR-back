@@ -19,7 +19,7 @@ public class StartRepairRequestValidator : AbstractValidator<StartRepairRequest>
            .WithMessage($"Адрес не найден!");
         RuleFor(s => s.UserId)
            .NotEmpty().WithMessage("Пользователь не авторизован!")
-           .MustAsync(async (id, ct) => await context.Addresses.AnyAsync(a => a.Id == id, ct))
+           .MustAsync(async (id, ct) => await context.Users.AnyAsync(a => a.Id == id, ct))
            .WithMessage($"Пользователь не найден!");
         RuleFor(s => s.DescriptionFailure)
            .NotEmpty().WithMessage("Добавьте описание проблемы!");

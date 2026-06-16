@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hope_tracKeR_back.Validators.Requests;
 
-public class DeviceModifyValidator : AbstractValidator<DeviceRequest>
+public class DeviceRequestValidator : AbstractValidator<DeviceRequest>
 {
-    public DeviceModifyValidator(HTContext context)
+    public DeviceRequestValidator(HTContext context)
     {
         RuleFor(d => d.Name)
             .NotEmpty().WithMessage("Название не может быть пустым!");
