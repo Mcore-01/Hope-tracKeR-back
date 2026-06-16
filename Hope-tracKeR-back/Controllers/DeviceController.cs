@@ -125,7 +125,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
     [HttpPost("excel_items")]
     public async Task<IActionResult> ExportIDevicesToExcel([FromBody] ItemFilter filter)
     {
-        var result = await _service.ExportDevicesToExcel(filter);
+        var result = await _service.ExportItemsToExcel(filter);
 
         if (result.IsSuccess)
             return File(result.Value, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Список_предметов.xlsx"); 
@@ -146,6 +146,26 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
 
         if (result.Errors.First().Message.Contains("Отчет о ремонте не найден!"))
             return NotFound(result.Errors.First().Message);
+
+        return BadRequest(result.Errors.First().Message);
+    }
+
+    [HttpPut("write_off/{itemId}/{userId}")]
+    public async Task<ActionResult> WriteOffDevice(int itemId, int userId)
+    {
+        var result = await _service.WriteOff(itemId, userId);
+
+        if (result.IsSuccess)
+            return Ok();
+
+        if (result.Errors.First() is NotFoundError)
+            return NotFound(result.Errors.First().Message);
+
+        if (result.Errors.First() is ValidationError)
+            return BadRequest(result.Errors.First().Message);
+
+        if (result.Errors.First() is InvalidOperationError)
+            return Conflict(result.Errors.First().Message);
 
         return BadRequest(result.Errors.First().Message);
     }

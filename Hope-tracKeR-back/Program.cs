@@ -26,6 +26,7 @@ services.AddScoped<ICatalogRepository<Brand>, BrandRepository>();
 services.AddScoped<ICatalogRepository<Address>, AddressRepository>();
 services.AddScoped<ICatalogRepository<Employee>, EmployeeRepository>();
 services.AddScoped<ICatalogRepository<Category>, CategoryRepository>();
+services.AddScoped<IWriteOffRepository, WriteOffRepository>();
 services.AddScoped<IItemRepository<Device, ItemFilter>, DeviceRepository>();
 services.AddScoped<IRepairRepository, RepairRepository>();
 services.AddScoped<IUserRepository, UserRepository>();

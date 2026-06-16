@@ -18,13 +18,14 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
 {
     private readonly IItemRepository<Device, ItemFilter> _repository;
     private readonly IRepairRepository _repairRepository;
+    private readonly IWriteOffRepository _writeOffRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<DeviceRequest> _validator;
     private readonly IValidator<StartRepairRequest> _startRepairValidator;
     private readonly IValidator<CompleteRepairRequest> _completeRepairValidator;
     public DeviceService(IItemRepository<Device, ItemFilter> itemRepository, 
         IMapper mapper, IValidator<DeviceRequest> validator, IValidator<StartRepairRequest> startRepairValidator,
-        IValidator<CompleteRepairRequest> completeRepairValidator, IRepairRepository repairRepository)
+        IValidator<CompleteRepairRequest> completeRepairValidator, IRepairRepository repairRepository, IWriteOffRepository writeOffRepository)
     {
         _repository = itemRepository;
         _mapper = mapper;
@@ -32,6 +33,7 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
         _startRepairValidator = startRepairValidator;   
         _completeRepairValidator = completeRepairValidator;
         _repairRepository = repairRepository;
+        _writeOffRepository = writeOffRepository;
     }
 
     public async Task<Result<IEnumerable<DeviceResponse>>> GetByFilters(ItemFilter filter)
@@ -220,7 +222,7 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
         }
     }
 
-    public async Task<Result<byte[]>> ExportDevicesToExcel(ItemFilter filter)
+    public async Task<Result<byte[]>> ExportItemsToExcel(ItemFilter filter)
     {
         try
         {
@@ -342,6 +344,40 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
         catch (Exception)
         {
             return Result.Fail(new Error("Произошла ошибка при генерации документа!"));
+        }
+    }
+
+    public async Task<Result> WriteOff(int itemId, int userId)
+    {
+        try
+        {
+            var item = await _repository.GetById(itemId);
+            item.Status = DeviceStatus.WriteOff;
+
+            var writeOff = new WriteOff
+            {
+                Date = DateTime.Now,
+                ItemId = item.Id,
+                UserId = userId
+            };
+
+            await _writeOffRepository.Create(writeOff);
+
+            await _repository.Update(item);
+
+            return Result.Ok();
+        }
+        catch (NullReferenceException ex)
+        {
+            return Result.Fail(new NotFoundError(ex.Message));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Result.Fail(new InvalidOperationError(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error($"Произошла ошибка: {ex.Message}"));
         }
     }
 }
