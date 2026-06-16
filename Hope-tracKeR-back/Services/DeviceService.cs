@@ -192,7 +192,7 @@ public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceRespo
                 return Result.Fail(new ValidationError(errors));
             }
 
-            var item = await _repository.GetById(repairRequest.UserId);
+            var item = await _repository.GetById(repairRequest.ItemId);
             var repair = await _repairRepository.GetRepairByItemId(repairRequest.UserId);
 
             repair.Status = RepairStatus.Completed;
