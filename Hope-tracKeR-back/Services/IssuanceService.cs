@@ -11,12 +11,12 @@ namespace Hope_tracKeR_back.Services;
 
 public class IssuanceService : IIssuanceService
 {
-    private readonly IItemRepository<Device, ItemFilter> _repository;
+    private readonly IItemRepository<Device> _repository;
     private readonly IIssuanceRepository _issuanceRepository;
     private readonly IValidator<IssueDeviceRequest> _validator;
 
     public IssuanceService(
-        IItemRepository<Device, ItemFilter> repository,
+        IItemRepository<Device> repository,
         IIssuanceRepository issuanceRepository,
         IValidator<IssueDeviceRequest> validator)
     {

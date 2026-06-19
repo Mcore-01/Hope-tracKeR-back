@@ -14,12 +14,12 @@ namespace Hope_tracKeR_back.Services;
 
 public class RepairService : IRepairService
 {
-    private readonly IItemRepository<Device, ItemFilter> _repository;
+    private readonly IItemRepository<Device> _repository;
     private readonly IRepairRepository _repairRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<StartRepairRequest> _startRepairValidator;
     private readonly IValidator<CompleteRepairRequest> _completeRepairValidator;
-    public RepairService(IItemRepository<Device, ItemFilter> itemRepository, IMapper mapper, IValidator<StartRepairRequest> startRepairValidator,
+    public RepairService(IItemRepository<Device> itemRepository, IMapper mapper, IValidator<StartRepairRequest> startRepairValidator,
         IValidator<CompleteRepairRequest> completeRepairValidator, IRepairRepository repairRepository)
     {
         _repository = itemRepository;

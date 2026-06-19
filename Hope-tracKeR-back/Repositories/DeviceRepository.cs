@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hope_tracKeR_back.Repositories;
 
-public class DeviceRepository : IItemRepository<Device, ItemFilter>
+public class DeviceRepository : IItemRepository<Device>
 {
     private readonly HTContext _context;
     public DeviceRepository(HTContext context)

@@ -10,13 +10,13 @@ namespace Hope_tracKeR_back.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class DeviceController : ControllerBase, IItemController<DeviceRequest, ItemFilter, DeviceResponse>
+public class DeviceController : ControllerBase, IItemController<DeviceRequest, DeviceResponse>
 {
-    private readonly IItemService<DeviceRequest, ItemFilter, DeviceResponse> _service;
+    private readonly IItemService<DeviceRequest, DeviceResponse> _service;
     private readonly IRepairService _repairService;
     private readonly IWriteOffService _writeOffService;
     private readonly IIssuanceService _issuanceService;
-    public DeviceController(IItemService<DeviceRequest, ItemFilter, DeviceResponse> service, IRepairService repairService, IWriteOffService writeOffService, IIssuanceService issuanceService)
+    public DeviceController(IItemService<DeviceRequest, DeviceResponse> service, IRepairService repairService, IWriteOffService writeOffService, IIssuanceService issuanceService)
     {
         _service = service;
         _repairService = repairService;

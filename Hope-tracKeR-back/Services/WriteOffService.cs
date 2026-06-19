@@ -11,8 +11,8 @@ namespace Hope_tracKeR_back.Services;
 public class WriteOffService : IWriteOffService
 {
     private readonly IWriteOffRepository _writeOffRepository;
-    private readonly IItemRepository<Device, ItemFilter> _repository;
-    public WriteOffService(IItemRepository<Device, ItemFilter> repository, IWriteOffRepository writeOffRepository)
+    private readonly IItemRepository<Device> _repository;
+    public WriteOffService(IItemRepository<Device> repository, IWriteOffRepository writeOffRepository)
     {   
         _repository = repository;
         _writeOffRepository = writeOffRepository;

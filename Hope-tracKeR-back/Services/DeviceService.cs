@@ -12,12 +12,12 @@ using Hope_tracKeR_back.Services.Interfaces;
 
 namespace Hope_tracKeR_back.Services;
 
-public class DeviceService : IItemService<DeviceRequest, ItemFilter, DeviceResponse>
+public class DeviceService : IItemService<DeviceRequest, DeviceResponse>
 {
-    private readonly IItemRepository<Device, ItemFilter> _repository;
+    private readonly IItemRepository<Device> _repository;
     private readonly IMapper _mapper;
     private readonly IValidator<DeviceRequest> _validator;
-    public DeviceService(IItemRepository<Device, ItemFilter> itemRepository, 
+    public DeviceService(IItemRepository<Device> itemRepository, 
         IMapper mapper, IValidator<DeviceRequest> validator, IValidator<StartRepairRequest> startRepairValidator,
         IValidator<CompleteRepairRequest> completeRepairValidator, IRepairRepository repairRepository)
     {
