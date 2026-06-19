@@ -13,5 +13,7 @@ public class DeviceResponse
     public string Brand { get; set; } = null!;
     public int CategoryId { get; set; }
     public string Category { get; set; }
+    public int? EmployeeId { get; set; }
+    public string? Employee { get; set; }
     public Dictionary<string, string> Attributes { get; set; } = new();
 }

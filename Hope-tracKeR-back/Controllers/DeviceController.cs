@@ -15,11 +15,13 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
     private readonly IItemService<DeviceRequest, ItemFilter, DeviceResponse> _service;
     private readonly IRepairService _repairService;
     private readonly IWriteOffService _writeOffService;
-    public DeviceController(IItemService<DeviceRequest, ItemFilter, DeviceResponse> service, IRepairService repairService, IWriteOffService writeOffService)
+    private readonly IIssuanceService _issuanceService;
+    public DeviceController(IItemService<DeviceRequest, ItemFilter, DeviceResponse> service, IRepairService repairService, IWriteOffService writeOffService, IIssuanceService issuanceService)
     {
         _service = service;
         _repairService = repairService;
         _writeOffService = writeOffService;
+        _issuanceService = issuanceService;
     }
 
     [HttpPost("device/filter")]
@@ -128,6 +130,17 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
     public async Task<ActionResult> WriteOffDevice(int itemId, int userId)
     {
         var result = await _writeOffService.WriteOff(itemId, userId);
+
+        if (result.IsSuccess)
+            return Ok();
+
+        return HandleError(result.Errors.First());
+    }
+
+    [HttpPost("issue")]
+    public async Task<ActionResult> IssueDevice([FromBody] IssueDeviceRequest request)
+    {
+        var result = await _issuanceService.IssueDevice(request);
 
         if (result.IsSuccess)
             return Ok();

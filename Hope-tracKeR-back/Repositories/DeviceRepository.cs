@@ -21,6 +21,7 @@ public class DeviceRepository : IItemRepository<Device, ItemFilter>
         .Include(i => i.Address)
         .Include(i => i.Brand)
         .Include(i => i.Category)
+        .Include(i => i.Employee)
         .Include(i => i.Attributes)
         .AsQueryable();
 
@@ -62,6 +63,8 @@ public class DeviceRepository : IItemRepository<Device, ItemFilter>
         var item = await _context.Devices
             .Include(i => i.Address)
             .Include(i => i.Brand)
+            .Include(i => i.Category)
+            .Include(i => i.Employee)
             .Include(i => i.Attributes)
             .FirstOrDefaultAsync(i => i.Id == id);
         if (item　== default)

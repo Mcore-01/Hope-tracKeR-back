@@ -29,5 +29,8 @@ public class DeviceRequestValidator : AbstractValidator<DeviceRequest>
             .NotEmpty().WithMessage("Категория не может быть пустым!")
             .MustAsync(async (id, ct) => await context.Categories.AnyAsync(a => a.Id == id, ct))
             .WithMessage("Категория не найдена!");
+        RuleFor(d => d.EmployeeId)
+            .MustAsync(async (id, ct) => id is null || await context.Employees.AnyAsync(e => e.Id == id, ct))
+            .WithMessage("Сотрудник не найден!");
     }
 }

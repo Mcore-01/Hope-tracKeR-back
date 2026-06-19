@@ -10,6 +10,7 @@
         public int AddressId { get; set; }
         public int BrandId { get; set; }
         public int CategoryId { get; set; }
+        public int? EmployeeId { get; set; }
         public Dictionary<string, string> Attributes { get; set; } = new();
     }
 }

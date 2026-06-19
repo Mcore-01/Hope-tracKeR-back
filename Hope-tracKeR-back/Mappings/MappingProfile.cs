@@ -13,6 +13,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Category, opt => opt.Ignore())
             .ForMember(dest => dest.Address, opt => opt.Ignore())
             .ForMember(dest => dest.Brand, opt => opt.Ignore())
+            .ForMember(dest => dest.Employee, opt => opt.Ignore())
             .ForMember(dest => dest.Attributes,
                 opt => opt.MapFrom(src => src.Attributes.Select(a => new ItemAttribute{
                     Name = a.Key,
@@ -23,6 +24,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.Name))
             .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name))
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Branch}, {src.Address.Building}, {src.Address.Floor}, {src.Address.Room}"))
+            .ForMember(dest => dest.Employee, opt => opt.MapFrom(src => src.Employee != null ? src.Employee.FullName : null))
             .ForMember(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.ToDictionary(a => a.Name, a => a.Value)));
 
         CreateMap<StartRepairRequest, Repair>()

@@ -55,7 +55,7 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
 
         modelBuilder.Entity<Device>().HasData(
             new Device { Id = 1, Name = "Монитор Samsung Odyssey", SerialNumber = "SAMS-OD-001", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 1, 15, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 1, CategoryId = 1 },
-            new Device { Id = 2, Name = "Ноутбук LG Gram", SerialNumber = "LG-GRAM-002", Status = DeviceStatus.Issued, AddedDate = new DateTime(2024, 2, 10, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 3, CategoryId = 2 },
+            new Device { Id = 2, Name = "Ноутбук LG Gram", SerialNumber = "LG-GRAM-002", Status = DeviceStatus.Issued, AddedDate = new DateTime(2024, 2, 10, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 3, CategoryId = 2, EmployeeId = 1 },
             new Device { Id = 3, Name = "Моноблок Logitech MX", SerialNumber = "LOG-MX-003", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 3, 5, 0, 0, 0, DateTimeKind.Utc), AddressId = 1, BrandId = 4, CategoryId = 4 },
             new Device { Id = 5, Name = "Картридж для принтера", SerialNumber = "CRTG-005", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 4, 1, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 1, CategoryId = 3 }
         );
@@ -86,5 +86,6 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
     public DbSet<ItemAttribute> ItemAttributes { get; set; }
     public DbSet<Repair> Repairs { get; set; }
     public DbSet<WriteOff> WriteOffs { get; set; }
+    public DbSet<Issuance> Issuances { get; set; }
     public DbSet<AuditLog> AuditLogs { get; set; }
 }
