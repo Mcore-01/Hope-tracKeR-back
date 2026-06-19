@@ -39,6 +39,7 @@ services.AddScoped<ICatalogService<Category>, CategoryService>();
 services.AddScoped<IRepairService, RepairService>();
 services.AddScoped<IWriteOffService, WriteOffService>();
 services.AddScoped<IIssuanceService, IssuanceService>();
+services.AddScoped<IInventoryService, InventoryService>();
 services.AddScoped<IItemService<DeviceRequest, DeviceResponse>, DeviceService>();
 services.AddScoped<IItemService<ConsumableRequest, ConsumableResponse>, ConsumableService>();
 services.AddScoped<IAuthService, AuthService>();

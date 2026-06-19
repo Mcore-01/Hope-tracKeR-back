@@ -3,6 +3,7 @@ using Hope_tracKeR_back.Controllers.Interfaces;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
+using Hope_tracKeR_back.Services;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +14,11 @@ namespace Hope_tracKeR_back.Controllers;
 public class ConsumableController : ControllerBase, IItemController<ConsumableRequest, ConsumableResponse>
 {
     private readonly IItemService<ConsumableRequest, ConsumableResponse> _service;
-    public ConsumableController(IItemService<ConsumableRequest, ConsumableResponse> service)
+    private readonly IInventoryService _inventoryService;
+    public ConsumableController(IItemService<ConsumableRequest, ConsumableResponse> service, IInventoryService inventoryService)
     {
         _service = service;
+        _inventoryService = inventoryService;
     }
 
     [HttpPost("Consumables/filter")]
@@ -80,6 +83,28 @@ public class ConsumableController : ControllerBase, IItemController<ConsumableRe
 
         if (result.IsSuccess)
             return File(result.Value, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Список_предметов.xlsx");
+
+        return HandleError(result.Errors.First());
+    }
+
+    [HttpPut("increase/{id}/{amount}")]
+    public async Task<ActionResult> IncreaseQuantity(int id, int amount)
+    {
+        var result = await _inventoryService.IncreaseQuantity(id, amount);
+
+        if (result.IsSuccess)
+            return Ok();
+
+        return HandleError(result.Errors.First());
+    }
+
+    [HttpPut("decrease/{id}/{amount}")]
+    public async Task<ActionResult> DecreaseQuantity(int id, int amount)
+    {
+        var result = await _inventoryService.DecreaseQuantity(id, amount);
+
+        if (result.IsSuccess)
+            return Ok();
 
         return HandleError(result.Errors.First());
     }
