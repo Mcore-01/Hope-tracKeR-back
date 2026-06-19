@@ -1,4 +1,5 @@
-﻿using Hope_tracKeR_back.Controllers.Interfaces;
+﻿using FluentResults;
+using Hope_tracKeR_back.Controllers.Interfaces;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
@@ -12,10 +13,13 @@ namespace Hope_tracKeR_back.Controllers;
 public class DeviceController : ControllerBase, IItemController<DeviceRequest, ItemFilter, DeviceResponse>
 {
     private readonly IItemService<DeviceRequest, ItemFilter, DeviceResponse> _service;
-
-    public DeviceController(IItemService<DeviceRequest, ItemFilter, DeviceResponse> service)
+    private readonly IRepairService _repairService;
+    private readonly IWriteOffService _writeOffService;
+    public DeviceController(IItemService<DeviceRequest, ItemFilter, DeviceResponse> service, IRepairService repairService, IWriteOffService writeOffService)
     {
         _service = service;
+        _repairService = repairService;
+        _writeOffService = writeOffService;
     }
 
     [HttpPost("device/filter")]
@@ -26,7 +30,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
         if (result.IsSuccess)
             return Ok(result.Value);
 
-        return StatusCode(500, result.Errors.First().Message);
+        return HandleError(result.Errors.First());
     }
 
     [HttpGet("{id}")]
@@ -37,10 +41,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
         if (result.IsSuccess)
             return Ok(result.Value);
 
-        if (result.Errors.First() is NotFoundError)
-            return NotFound(result.Errors.First().Message);
-
-        return BadRequest(result.Errors.First().Message);
+        return HandleError(result.Errors.First());
     }
 
     [HttpPost("create")]
@@ -51,13 +52,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
         if (result.IsSuccess)
             return Ok(result.Value);
 
-        if (result.Errors.First() is ValidationError)
-            return BadRequest(result.Errors.First().Message);
-
-        if (result.Errors.First() is InvalidOperationError)
-            return Conflict(result.Errors.First().Message);
-
-        return BadRequest(result.Errors.First().Message);
+        return HandleError(result.Errors.First());
     }
 
     [HttpPut("update")]
@@ -68,16 +63,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
         if (result.IsSuccess)
             return Ok();
 
-        if (result.Errors.First() is NotFoundError)
-            return NotFound(result.Errors.First().Message);
-
-        if (result.Errors.First() is ValidationError)
-            return BadRequest(result.Errors.First().Message);
-
-        if (result.Errors.First() is InvalidOperationError)
-            return Conflict(result.Errors.First().Message);
-
-        return BadRequest(result.Errors.First().Message);
+        return HandleError(result.Errors.First());
     }
 
     [HttpDelete("{id}")]
@@ -88,38 +74,29 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
         if (result.IsSuccess)
             return Ok();
 
-        if (result.Errors.First() is NotFoundError)
-            return NotFound(result.Errors.First().Message);
-
-        return BadRequest(result.Errors.First().Message);
+        return HandleError(result.Errors.First());
     }
 
     [HttpPost("start_repair")]
     public async Task<ActionResult> StartRepairDevice([FromBody] StartRepairRequest repair)
     {
-        var result = await _service.StartRepair(repair);
+        var result = await _repairService.StartRepair(repair);
 
         if (result.IsSuccess)
             return Ok();
 
-        if (result.Errors.First() is NotFoundError)
-            return NotFound(result.Errors.First().Message);
-
-        return BadRequest(result.Errors.First().Message);
+        return HandleError(result.Errors.First());
     }
 
     [HttpPost("end_repair")]
     public async Task<ActionResult> CompleteRepair([FromBody] CompleteRepairRequest repair)
     {
-        var result = await _service.CompleteRepair(repair);
+        var result = await _repairService.CompleteRepair(repair);
 
         if (result.IsSuccess)
             return Ok();
 
-        if (result.Errors.First() is NotFoundError)
-            return NotFound(result.Errors.First().Message);
-
-        return BadRequest(result.Errors.First().Message);
+        return HandleError(result.Errors.First());
     }
 
     [HttpPost("excel_items")]
@@ -128,45 +105,44 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, I
         var result = await _service.ExportItemsToExcel(filter);
 
         if (result.IsSuccess)
-            return File(result.Value, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Список_предметов.xlsx"); 
+            return File(result.Value, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Список_предметов.xlsx");
 
-        if (result.Errors.First().Message.Contains("Совпадений по фильтрам не найдено!"))
-            return NotFound(result.Errors.First().Message);
-
-        return BadRequest(result.Errors.First().Message);
+        return HandleError(result.Errors.First());
     }
 
     [HttpPost("repair_act/{itemID}")]
     public async Task<IActionResult> GenerateRepairActDocx(int itemID)
     {
-        var result = await _service.GenerateRepairActToDocx(itemID);
+        var result = await _repairService.GenerateRepairActToDocx(itemID);
 
         if (result.IsSuccess)
             return File(result.Value, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"Акт_приема_передачи.docx");
 
-        if (result.Errors.First().Message.Contains("Отчет о ремонте не найден!"))
-            return NotFound(result.Errors.First().Message);
+        if (result.IsSuccess)
+            return Ok();
 
-        return BadRequest(result.Errors.First().Message);
+        return HandleError(result.Errors.First());
     }
 
     [HttpPut("write_off/{itemId}/{userId}")]
     public async Task<ActionResult> WriteOffDevice(int itemId, int userId)
     {
-        var result = await _service.WriteOff(itemId, userId);
+        var result = await _writeOffService.WriteOff(itemId, userId);
 
         if (result.IsSuccess)
             return Ok();
 
-        if (result.Errors.First() is NotFoundError)
-            return NotFound(result.Errors.First().Message);
+        return HandleError(result.Errors.First());
+    }
 
-        if (result.Errors.First() is ValidationError)
-            return BadRequest(result.Errors.First().Message);
-
-        if (result.Errors.First() is InvalidOperationError)
-            return Conflict(result.Errors.First().Message);
-
-        return BadRequest(result.Errors.First().Message);
+    private ActionResult HandleError(IError error)
+    {
+        return error switch
+        {
+            NotFoundError => NotFound(error.Message),
+            ValidationError => BadRequest(error.Message),
+            InvalidOperationError => Conflict(error.Message),
+            _ => StatusCode(500, error.Message)
+        };
     }
 }

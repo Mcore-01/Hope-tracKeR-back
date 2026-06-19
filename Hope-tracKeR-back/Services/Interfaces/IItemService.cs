@@ -2,7 +2,7 @@
 
 namespace Hope_tracKeR_back.Services.Interfaces;
 
-public interface IItemService <TRequest, TFilter, TResponse> : IRepairService, IWriteOffService
+public interface IItemService <TRequest, TFilter, TResponse>
 {
     Task<Result<IEnumerable<TResponse>>> GetByFilters(TFilter filter);
     Task<Result<TResponse>> GetById(int id);
