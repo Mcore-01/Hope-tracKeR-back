@@ -2,7 +2,6 @@
 using ClosedXML.Excel;
 using FluentResults;
 using FluentValidation;
-using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Models.Entities;
@@ -10,10 +9,10 @@ using Hope_tracKeR_back.Repositories.Interfaces;
 
 namespace Hope_tracKeR_back.Services;
 
-public class DeviceService : BaseItemService<Device, DeviceRequest, DeviceResponse>
+public class ConsumableService : BaseItemService<Consumable, ConsumableRequest, ConsumableResponse>
 {
-    public DeviceService(IItemRepository<Device> repository, IMapper mapper,  IValidator<DeviceRequest> validator)
-        : base(repository, mapper, validator) {}
+    public ConsumableService(IItemRepository<Consumable> repository, IMapper mapper, IValidator<ConsumableRequest> validator)
+        : base(repository, mapper, validator) { }
 
     public override async Task<Result<byte[]>> ExportItemsToExcel(ItemFilter filter)
     {
@@ -31,16 +30,13 @@ public class DeviceService : BaseItemService<Device, DeviceRequest, DeviceRespon
 
             using (var workbook = new XLWorkbook())
             {
-                var worksheet = workbook.Worksheets.Add("Техника");
+                var worksheet = workbook.Worksheets.Add("Расходники");
 
                 worksheet.Cell(1, 1).Value = "Индентификатор в базе";
                 worksheet.Cell(1, 2).Value = "Наименование";
                 worksheet.Cell(1, 3).Value = "Бренд";
-                worksheet.Cell(1, 4).Value = "Серийный номер";
-                worksheet.Cell(1, 5).Value = "Категория";
-                worksheet.Cell(1, 6).Value = "Статус";
-                worksheet.Cell(1, 7).Value = "Добавлен в базу";
-                worksheet.Cell(1, 8).Value = "Адрес хранения";
+                worksheet.Cell(1, 4).Value = "Адрес хранения";
+                worksheet.Cell(1, 5).Value = "Количество";
 
                 var headerRow = worksheet.Row(1);
                 headerRow.Style.Font.Bold = true;
@@ -53,10 +49,8 @@ public class DeviceService : BaseItemService<Device, DeviceRequest, DeviceRespon
                     worksheet.Cell(i + 2, 1).Value = items[i].Id;
                     worksheet.Cell(i + 2, 2).Value = items[i].Name;
                     worksheet.Cell(i + 2, 3).Value = items[i].Brand.Name;
-                    worksheet.Cell(i + 2, 4).Value = items[i].SerialNumber;
-                    worksheet.Cell(i + 2, 6).Value = items[i].Status.GetDisplayName();
-                    worksheet.Cell(i + 2, 7).Value = items[i].AddedDate;
-                    worksheet.Cell(i + 2, 8).Value = $"{items[i].Address.Branch}, {items[i].Address.Building}, {items[i].Address.Floor}, {items[i].Address.Room}";
+                    worksheet.Cell(i + 2, 4).Value = $"{items[i].Address.Branch}, {items[i].Address.Building}, {items[i].Address.Floor}, {items[i].Address.Room}";
+                    worksheet.Cell(i + 2, 5).Value = items[i].Quantity;
                 }
 
                 worksheet.Columns().AdjustToContents();

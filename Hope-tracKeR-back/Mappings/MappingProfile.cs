@@ -15,10 +15,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Brand, opt => opt.Ignore())
             .ForMember(dest => dest.Employee, opt => opt.Ignore())
             .ForMember(dest => dest.Attributes,
-                opt => opt.MapFrom(src => src.Attributes.Select(a => new ItemAttribute{
-                    Name = a.Key,
-                    Value = a.Value
-                }).ToList()));
+                opt => opt.MapFrom(src => src.Attributes.Select(a => new ItemAttribute{Name = a.Key, Value = a.Value}).ToList()));
 
         CreateMap<Device, DeviceResponse>()
             .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.Name))
@@ -35,5 +32,16 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Diagnosis, opt => opt.Ignore())
             .ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.CurrentAddressId))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.DescriptionFailure));
+
+        CreateMap<ConsumableRequest, Consumable>()
+            .ForMember(dest => dest.Address, opt => opt.Ignore())
+            .ForMember(dest => dest.Brand, opt => opt.Ignore())
+            .ForMember(dest => dest.Attributes,
+                opt => opt.MapFrom(src => src.Attributes.Select(a => new ItemAttribute {Name = a.Key, Value = a.Value}).ToList()));
+
+        CreateMap<Consumable, ConsumableResponse>()
+            .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.Name))
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Branch}, {src.Address.Building}, {src.Address.Floor}, {src.Address.Room}"))
+            .ForMember(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.ToDictionary(a => a.Name, a => a.Value)));
     }
 }
