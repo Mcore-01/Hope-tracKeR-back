@@ -9,4 +9,6 @@ public class Device : Item
     public DateTime AddedDate { get; set; }
     public int CategoryId { get; set; }
     public Category Category { get; set; }
+    public int? EmployeeId { get; set; }
+    public Employee? Employee { get; set; }
 }
