@@ -23,7 +23,11 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
             new Brand { Id = 1, Name = "Samsung" },
             new Brand { Id = 2, Name = "Dexp" },
             new Brand { Id = 3, Name = "LG" },
-            new Brand { Id = 4, Name = "Logitech" }
+            new Brand { Id = 4, Name = "Logitech" },
+            new Brand { Id = 5, Name = "Svetocopy" },
+            new Brand { Id = 6, Name = "Kite" },
+            new Brand { Id = 7, Name = "Attache" },
+            new Brand { Id = 8, Name = "OfficeSpace" }
         );
 
         modelBuilder.Entity<Category>().HasData(
@@ -60,6 +64,15 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
             new Device { Id = 5, Name = "Картридж для принтера", SerialNumber = "CRTG-005", Status = DeviceStatus.InStock, AddedDate = new DateTime(2024, 4, 1, 0, 0, 0, DateTimeKind.Utc), AddressId = 2, BrandId = 1, CategoryId = 3 }
         );
 
+        modelBuilder.Entity<Consumable>().HasData(
+            new Consumable { Id = 6, Name = "Бумага А4 Svetocopy", AddressId = 1, BrandId = 5, Quantity = 50 },
+            new Consumable { Id = 7, Name = "Бумага А3 Svetocopy", AddressId = 1, BrandId = 5, Quantity = 20 },
+            new Consumable { Id = 8, Name = "Скрепки 25 мм", AddressId = 2, BrandId = 6, Quantity = 100 },
+            new Consumable { Id = 9, Name = "Папка-регистратор Attache", AddressId = 3, BrandId = 7, Quantity = 30 },
+            new Consumable { Id = 10, Name = "Ручка шариковая OfficeSpace", AddressId = 2, BrandId = 8, Quantity = 200 },
+            new Consumable { Id = 11, Name = "Стикеры самоклеящиеся", AddressId = 1, BrandId = 7, Quantity = 15 }
+        );
+
         modelBuilder.Entity<ItemAttribute>().HasData(
             new ItemAttribute { Id = 1, ItemId = 1, Name = "Диагональ", Value = "27 дюмов" },
             new ItemAttribute { Id = 2, ItemId = 1, Name = "Разрешение", Value = "2560x1440" },
@@ -83,6 +96,7 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
     public DbSet<User> Users { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<Device> Devices { get; set; }
+    public DbSet<Consumable> Consumables { get; set; }
     public DbSet<ItemAttribute> ItemAttributes { get; set; }
     public DbSet<Repair> Repairs { get; set; }
     public DbSet<WriteOff> WriteOffs { get; set; }

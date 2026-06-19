@@ -16,14 +16,13 @@ public class DeviceRepository : IItemRepository<Device>
 
     public async Task<IEnumerable<Device>> GetByFilters(ItemFilter filter)
     {
-
         var query = _context.Devices
-        .Include(i => i.Address)
-        .Include(i => i.Brand)
-        .Include(i => i.Category)
-        .Include(i => i.Employee)
-        .Include(i => i.Attributes)
-        .AsQueryable();
+            .Include(i => i.Address)
+            .Include(i => i.Brand)
+            .Include(i => i.Category)
+            .Include(i => i.Employee)
+            .Include(i => i.Attributes)
+            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filter.SearchField))
         {

@@ -1,33 +1,94 @@
-﻿using Hope_tracKeR_back.Models.DTOs.Requests;
+﻿using Hope_tracKeR_back.Data;
+using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hope_tracKeR_back.Repositories;
 
 public class ConsumableRepository : IItemRepository<Consumable>
 {
-    public Task<int> Create(Consumable Value)
+    private readonly HTContext _context;
+    public ConsumableRepository(HTContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    public Task<IEnumerable<Consumable>> GetByFilters(ItemFilter filter)
+    public async Task<int> Create(Consumable item)
     {
-        throw new NotImplementedException();
+        _context.Consumables.Add(item);
+
+        await _context.SaveChangesAsync();
+
+        return item.Id;
     }
 
-    public Task<Consumable> GetById(int id)
+    public async Task<IEnumerable<Consumable>> GetByFilters(ItemFilter filter)
     {
-        throw new NotImplementedException();
+        var query = _context.Consumables
+            .Include(i => i.Address)
+            .Include(i => i.Brand)
+            .Include(i => i.Attributes)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(filter.SearchField))
+        {
+            var searchField = filter.SearchField.ToLower();
+            query = query.Where(i => i.Name.ToLower().Contains(searchField));
+        }
+
+        if (filter.AddressId.HasValue)
+            query = query.Where(i => i.AddressId == filter.AddressId.Value);
+
+        if (filter.BrandId.HasValue)
+            query = query.Where(i => i.BrandId == filter.BrandId.Value);
+
+        if (filter.Attributes is not null && filter.Attributes.Count > 0)
+        {
+            foreach (var attr in filter.Attributes)
+            {
+                query = query.Where(i => i.Attributes.Any(a => a.Name == attr.Key && a.Value == attr.Value));
+            }
+        }
+
+        var items = await query.ToListAsync();
+        return items;
     }
 
-    public Task Remove(int id)
+    public async Task<Consumable> GetById(int id)
     {
-        throw new NotImplementedException();
+        var item = await _context.Consumables
+            .Include(i => i.Address)
+            .Include(i => i.Brand)
+            .Include(i => i.Attributes)
+            .FirstOrDefaultAsync(i => i.Id == id);
+        if (item == default)
+            throw new NullReferenceException($"Объект с ID {id} не найден!");
+
+        return item;
     }
 
-    public Task Update(Consumable value)
+    public async Task Remove(int id)
     {
-        throw new NotImplementedException();
+        var existingItem = await _context.Consumables.FirstOrDefaultAsync(i => i.Id == id);
+
+        if (existingItem == default)
+            throw new NullReferenceException($"Объект с ID {id} не найден!");
+
+        _context.Consumables.Remove(existingItem);
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task Update(Consumable item)
+    {
+        var itemIsExist = _context.Consumables.Include(i => i.Attributes).Any(i => i.Id == item.Id);
+
+        if (!itemIsExist)
+            throw new NullReferenceException($"Объект с ID {item.Id} не найден!");
+
+        _context.Consumables.Update(item);
+
+        await _context.SaveChangesAsync();
     }
 }
