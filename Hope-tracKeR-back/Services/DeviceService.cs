@@ -33,7 +33,7 @@ public class DeviceService : BaseItemService<Device, DeviceRequest, DeviceRespon
             {
                 var worksheet = workbook.Worksheets.Add("Техника");
 
-                worksheet.Cell(1, 1).Value = "Индентификатор в базе";
+                worksheet.Cell(1, 1).Value = "Идентификатор в базе";
                 worksheet.Cell(1, 2).Value = "Наименование";
                 worksheet.Cell(1, 3).Value = "Бренд";
                 worksheet.Cell(1, 4).Value = "Серийный номер";
