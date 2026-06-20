@@ -3,6 +3,7 @@ using Hope_tracKeR_back.Controllers.Interfaces;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
+using Hope_tracKeR_back.Services;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +14,14 @@ namespace Hope_tracKeR_back.Controllers;
 public class CartridgeController : ControllerBase, IItemController<CartridgeRequest, CartridgeResponse>
 {
     private readonly IItemService<CartridgeRequest, CartridgeResponse> _service;
-    public CartridgeController(IItemService<CartridgeRequest, CartridgeResponse> service)
+    private readonly IRefillService _refillService;
+    public CartridgeController(IItemService<CartridgeRequest, CartridgeResponse> service, IRefillService refillService)
     {
         _service = service;
+        _refillService = refillService;
     }
 
-    [HttpPost("Cartridges/filter")]
+    [HttpPost("cartridges/filter")]
     public async Task<ActionResult<IEnumerable<CartridgeResponse>>> GetByFilters([FromBody] ItemFilter filter)
     {
         var result = await _service.GetByFilters(filter);
@@ -80,6 +83,28 @@ public class CartridgeController : ControllerBase, IItemController<CartridgeRequ
 
         if (result.IsSuccess)
             return File(result.Value, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Список_картриджей.xlsx");
+
+        return HandleError(result.Errors.First());
+    }
+
+    [HttpPost("start_refill")]
+    public async Task<ActionResult> StartRefillCartridge([FromBody] StartRefillRequest refillRequest)
+    {
+        var result = await _refillService.StartRefill(refillRequest);
+
+        if (result.IsSuccess)
+            return Ok();
+
+        return HandleError(result.Errors.First());
+    }
+
+    [HttpPost("end_refill")]
+    public async Task<ActionResult> CompleteRefillCartridge([FromBody] CompleteRefillRequest refillRequest)
+    {
+        var result = await _refillService.CompleteRefill(refillRequest);
+
+        if (result.IsSuccess)
+            return Ok();
 
         return HandleError(result.Errors.First());
     }
