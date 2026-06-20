@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Models.Entities;
@@ -43,5 +44,18 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.Name))
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Branch}, {src.Address.Building}, {src.Address.Floor}, {src.Address.Room}"))
             .ForMember(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.ToDictionary(a => a.Name, a => a.Value)));
+
+        CreateMap<CartridgeRequest, Cartridge>()
+            .ForMember(dest => dest.Address, opt => opt.Ignore())
+            .ForMember(dest => dest.Brand, opt => opt.Ignore())
+            .ForMember(dest => dest.Attributes,
+                opt => opt.MapFrom(src => src.Attributes.Select(a => new ItemAttribute { Name = a.Key, Value = a.Value }).ToList()))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+        CreateMap<Cartridge, CartridgeResponse>()
+            .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.Name))
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Branch}, {src.Address.Building}, {src.Address.Floor}, {src.Address.Room}"))
+            .ForMember(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.ToDictionary(a => a.Name, a => a.Value)))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
     }
 }
