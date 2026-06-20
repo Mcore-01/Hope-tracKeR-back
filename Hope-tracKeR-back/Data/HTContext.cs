@@ -96,6 +96,14 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
             new Repair { Id = 5, StartDate = new DateTime(2025, 6, 1, 0, 0, 0, DateTimeKind.Utc), EndDate = null, Description = "Монитор моргает и периодически гаснет", Diagnosis = "Неисправен шлейф матрицы", Status = RepairStatus.InProgress, ItemId = 1, AddressId = 1, UserId = 1 },
             new Repair { Id = 6, StartDate = new DateTime(2025, 6, 3, 0, 0, 0, DateTimeKind.Utc), EndDate = null, Description = "Ноутбук сильно греется и выключается", Diagnosis = "Ожидается диагностика", Status = RepairStatus.InProgress, ItemId = 2, AddressId = 2, UserId = 1 }
         );
+
+        modelBuilder.Entity<Refill>().HasData(
+            new Refill { Id = 1, StartDate = new DateTime(2025, 6, 1, 10, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 6, 2, 14, 30, 0, DateTimeKind.Utc), Status = RefillStatus.Completed, ItemId = 101, UserId = 1, AddressId = 1 },
+            new Refill { Id = 2, StartDate = new DateTime(2025, 6, 5, 9, 0, 0, DateTimeKind.Utc), EndDate = null, Status = RefillStatus.Completed, ItemId = 103, UserId = 2, AddressId = 1 },
+            new Refill { Id = 3, StartDate = new DateTime(2025, 6, 10, 11, 15, 0, DateTimeKind.Utc), EndDate = null, Status = RefillStatus.InProgress, ItemId = 102, UserId = 3, AddressId = 1 },
+            new Refill { Id = 4, StartDate = new DateTime(2025, 6, 12, 8, 30, 0, DateTimeKind.Utc), EndDate = new DateTime(2025, 6, 13, 16, 0, 0, DateTimeKind.Utc), Status = RefillStatus.Completed, ItemId = 104, UserId = 4, AddressId = 1 },
+            new Refill { Id = 5, StartDate = new DateTime(2025, 6, 15, 14, 0, 0, DateTimeKind.Utc), EndDate = null, Status = RefillStatus.Completed, ItemId = 105, UserId = 5, AddressId = 1 }
+        );
     }
 
     public DbSet<Brand> Brands { get; set; }
@@ -109,6 +117,7 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
     public DbSet<Cartridge> Cartridges { get; set; }
     public DbSet<ItemAttribute> ItemAttributes { get; set; }
     public DbSet<Repair> Repairs { get; set; }
+    public DbSet<Refill> Refills { get; set; }
     public DbSet<WriteOff> WriteOffs { get; set; }
     public DbSet<Issuance> Issuances { get; set; }
     public DbSet<AuditLog> AuditLogs { get; set; }
