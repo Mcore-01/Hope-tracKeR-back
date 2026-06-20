@@ -11,7 +11,7 @@ public class CompleteRefillRequestValidator : AbstractValidator<CompleteRefillRe
     {
         RuleFor(s => s.ItemId)
             .NotEmpty().WithMessage("Пустой идентификатор предмета!")
-            .MustAsync(async (id, ct) => await context.Devices.AnyAsync(a => a.Id == id, ct))
+            .MustAsync(async (id, ct) => await context.Cartridges.AnyAsync(a => a.Id == id, ct))
             .WithMessage($"Предмет не найден!");
         RuleFor(s => s.AddressId)
            .NotEmpty().WithMessage("Пустой идентификатор адреса!")
