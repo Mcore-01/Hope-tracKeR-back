@@ -2,6 +2,7 @@
 using Hope_tracKeR_back.Config;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
+using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Hope_tracKeR_back.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.OAuth;
@@ -33,12 +34,16 @@ public class AuthService : IAuthService
         if(user.Password != GetHashPassword(loginRequest.Password))
             return Result.Fail<LoginResponse>("Неправильный пароль!");
 
-        return Result.Ok(new LoginResponse() { UserId = user.Id, UserName = user.FullName, Token = CreateToken(user.FullName) });
+        return Result.Ok(new LoginResponse() { UserId = user.Id, UserName = user.FullName, Token = CreateToken(user) });
     }
 
-    private string CreateToken(string username)
+    private string CreateToken(User user)
     {
-        var claims = new List<Claim> { new(ClaimTypes.Name, username) };
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name, user.FullName),
+            new("login", user.Login)
+        };
         var jwt = new JwtSecurityToken(
                 issuer: AuthOptions.ISSUER,
                 audience: AuthOptions.AUDIENCE,

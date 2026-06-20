@@ -6,13 +6,14 @@ using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
+using Hope_tracKeR_back.Services.Interfaces;
 
 namespace Hope_tracKeR_back.Services;
 
 public class ConsumableService : BaseItemService<Consumable, ConsumableRequest, ConsumableResponse>
 {
-    public ConsumableService(IItemRepository<Consumable> repository, IMapper mapper, IValidator<ConsumableRequest> validator)
-        : base(repository, mapper, validator) { }
+    public ConsumableService(IItemRepository<Consumable> repository, IMapper mapper, IValidator<ConsumableRequest> validator, IAuditLogService auditLog)
+        : base(repository, mapper, validator, auditLog) { }
 
     public override async Task<Result<byte[]>> ExportItemsToExcel(ItemFilter filter)
     {

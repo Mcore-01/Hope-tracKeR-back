@@ -1,5 +1,6 @@
 using FluentResults;
 using FluentValidation;
+using Hope_tracKeR_back.Constants;
 using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.DTOs.Requests;
@@ -14,32 +15,33 @@ public class IssuanceService : IIssuanceService
     private readonly IItemRepository<Device> _repository;
     private readonly IIssuanceRepository _issuanceRepository;
     private readonly IValidator<IssueDeviceRequest> _validator;
+    private readonly IAuditLogService _auditLog;
 
-    public IssuanceService(
-        IItemRepository<Device> repository,
-        IIssuanceRepository issuanceRepository,
-        IValidator<IssueDeviceRequest> validator)
+    public IssuanceService(IItemRepository<Device> repository, IIssuanceRepository issuanceRepository, IValidator<IssueDeviceRequest> validator, IAuditLogService auditLog)
     {
         _repository = repository;
         _issuanceRepository = issuanceRepository;
         _validator = validator;
+        _auditLog = auditLog;
     }
 
     public async Task<Result> IssueDevice(IssueDeviceRequest request)
     {
+        var validationResult = await _validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join("\n", validationResult.Errors);
+            return Result.Fail(new ValidationError(errors));
+        }
+
         try
         {
-            var validationResult = await _validator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                var errors = string.Join("\n", validationResult.Errors);
-                return Result.Fail(new ValidationError(errors));
-            }
-
             var item = await _repository.GetById(request.ItemId);
 
             if (item.Status != DeviceStatus.InStock)
                 return Result.Fail(new InvalidOperationError("Выдать можно только технику со статусом «В наличии»!"));
+
+            var oldDevice = new { item.Id, item.Status, item.EmployeeId };
 
             item.Status = DeviceStatus.Issued;
             item.EmployeeId = request.EmployeeId;
@@ -52,8 +54,11 @@ public class IssuanceService : IIssuanceService
                 UserId = request.UserId
             };
 
-            await _issuanceRepository.Create(issuance);
+            var issuanceId = await _issuanceRepository.Create(issuance);
             await _repository.Update(item);
+
+            await _auditLog.LogAsync(AuditActions.Issue, nameof(Issuance), issuanceId.ToString(), null, issuance);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), oldDevice, new { item.Id, item.Status, item.EmployeeId });
 
             return Result.Ok();
         }

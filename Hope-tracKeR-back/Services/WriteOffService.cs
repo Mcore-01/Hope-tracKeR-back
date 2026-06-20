@@ -1,4 +1,6 @@
 ﻿using FluentResults;
+using FluentValidation;
+using Hope_tracKeR_back.Constants;
 using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.DTOs.Requests;
@@ -12,29 +14,45 @@ public class WriteOffService : IWriteOffService
 {
     private readonly IWriteOffRepository _writeOffRepository;
     private readonly IItemRepository<Device> _repository;
-    public WriteOffService(IItemRepository<Device> repository, IWriteOffRepository writeOffRepository)
-    {   
+    private readonly IValidator<WriteOffDeviceRequest> _validator;
+    private readonly IAuditLogService _auditLog;
+
+    public WriteOffService(IItemRepository<Device> repository, IWriteOffRepository writeOffRepository, IValidator<WriteOffDeviceRequest> validator, IAuditLogService auditLog)
+    {
         _repository = repository;
         _writeOffRepository = writeOffRepository;
+        _validator = validator;
+        _auditLog = auditLog;
     }
 
-    public async Task<Result> WriteOff(int itemId, int userId)
+    public async Task<Result> WriteOff(WriteOffDeviceRequest writeOffDeviceRequest)
     {
+        var validationResult = await _validator.ValidateAsync(writeOffDeviceRequest);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join("\n", validationResult.Errors);
+            return Result.Fail(new ValidationError(errors));
+        }
+
         try
         {
-            var item = await _repository.GetById(itemId);
+            var item = await _repository.GetById(writeOffDeviceRequest.ItemId);
+            var oldDevice = new { item.Id, item.Status };
+
             item.Status = DeviceStatus.WriteOff;
 
             var writeOff = new WriteOff
             {
                 Date = DateTime.UtcNow,
                 ItemId = item.Id,
-                UserId = userId
+                UserId = writeOffDeviceRequest.UserId,
             };
 
-            await _writeOffRepository.Create(writeOff);
-
+            var writeOffId = await _writeOffRepository.Create(writeOff);
             await _repository.Update(item);
+
+            await _auditLog.LogAsync(AuditActions.WriteOff, nameof(WriteOff), writeOffId.ToString(), null, writeOff);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), oldDevice, new { item.Id, item.Status });
 
             return Result.Ok();
         }

@@ -1,7 +1,6 @@
 using FluentValidation;
 using Hope_tracKeR_back.Config;
 using Hope_tracKeR_back.Data;
-using Hope_tracKeR_back.Middlewares;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Models.Entities;
@@ -22,6 +21,8 @@ services.AddValidatorsFromAssemblyContaining<BrandValidator>();
 services.AddValidatorsFromAssemblyContaining<AddressValidator>();
 services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
 services.AddValidatorsFromAssemblyContaining<CategoryValidator>();
+services.AddHttpContextAccessor();
+services.AddScoped<IAuditLogService, AuditLogService>();
 services.AddScoped<ICatalogRepository<Brand>, BrandRepository>();
 services.AddScoped<ICatalogRepository<Address>, AddressRepository>();
 services.AddScoped<ICatalogRepository<Employee>, EmployeeRepository>();
@@ -66,7 +67,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<LogMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

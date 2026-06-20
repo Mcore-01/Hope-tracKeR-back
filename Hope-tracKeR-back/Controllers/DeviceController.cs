@@ -126,10 +126,10 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, D
         return HandleError(result.Errors.First());
     }
 
-    [HttpPut("write_off/{itemId}/{userId}")]
-    public async Task<ActionResult> WriteOffDevice(int itemId, int userId)
+    [HttpPut("write_off")]
+    public async Task<ActionResult> WriteOffDevice([FromBody] WriteOffDeviceRequest writeOffDeviceRequest)
     {
-        var result = await _writeOffService.WriteOff(itemId, userId);
+        var result = await _writeOffService.WriteOff(writeOffDeviceRequest);
 
         if (result.IsSuccess)
             return Ok();

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentResults;
 using FluentValidation;
+using Hope_tracKeR_back.Constants;
 using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.DTOs.Requests;
@@ -19,43 +20,55 @@ public class RepairService : IRepairService
     private readonly IMapper _mapper;
     private readonly IValidator<StartRepairRequest> _startRepairValidator;
     private readonly IValidator<CompleteRepairRequest> _completeRepairValidator;
+    private readonly IAuditLogService _auditLog;
+
     public RepairService(IItemRepository<Device> itemRepository, IMapper mapper, IValidator<StartRepairRequest> startRepairValidator,
-        IValidator<CompleteRepairRequest> completeRepairValidator, IRepairRepository repairRepository)
+        IValidator<CompleteRepairRequest> completeRepairValidator, IRepairRepository repairRepository, IAuditLogService auditLog)
     {
         _repository = itemRepository;
         _mapper = mapper;
         _startRepairValidator = startRepairValidator;
         _completeRepairValidator = completeRepairValidator;
         _repairRepository = repairRepository;
+        _auditLog = auditLog;
     }
 
     public async Task<Result<int>> StartRepair(StartRepairRequest repairRequest)
     {
+        var validationResult = await _startRepairValidator.ValidateAsync(repairRequest);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join("\n", validationResult.Errors);
+            return Result.Fail<int>(new ValidationError(errors));
+        }
+
         try
         {
-            var validationResult = await _startRepairValidator.ValidateAsync(repairRequest);
-            if (!validationResult.IsValid)
-            {
-                var errors = string.Join("\n", validationResult.Errors);
-                return Result.Fail<int>(new ValidationError(errors));
-            }
-
             var repair = _mapper.Map<Repair>(repairRequest);
             repair.Status = RepairStatus.InProgress;
 
             var item = await _repository.GetById(repair.ItemId);
+            var oldDevice = new { item.Id, item.Status, item.AddressId };
+
             item.Status = DeviceStatus.Repair;
             item.AddressId = repair.AddressId;
 
             await _repository.Update(item);
 
-            var itemId = await _repairRepository.Create(repair);
+            var repairId = await _repairRepository.Create(repair);
 
-            return Result.Ok(itemId);
+            await _auditLog.LogAsync(AuditActions.StartRepair, nameof(Repair), repairId.ToString(), null, repair);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), oldDevice, new { item.Id, item.Status, item.AddressId });
+
+            return Result.Ok(repairId);
         }
         catch (InvalidOperationException ex)
         {
             return Result.Fail<int>(new InvalidOperationError(ex.Message));
+        }
+        catch (NullReferenceException ex)
+        {
+            return Result.Fail<int>(new NotFoundError(ex.Message));
         }
         catch (Exception ex)
         {
@@ -65,17 +78,20 @@ public class RepairService : IRepairService
 
     public async Task<Result> CompleteRepair(CompleteRepairRequest repairRequest)
     {
+        var validationResult = await _completeRepairValidator.ValidateAsync(repairRequest);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join("\n", validationResult.Errors);
+            return Result.Fail(new ValidationError(errors));
+        }
+
         try
         {
-            var validationResult = await _completeRepairValidator.ValidateAsync(repairRequest);
-            if (!validationResult.IsValid)
-            {
-                var errors = string.Join("\n", validationResult.Errors);
-                return Result.Fail(new ValidationError(errors));
-            }
-
             var item = await _repository.GetById(repairRequest.ItemId);
             var repair = await _repairRepository.GetRepairByItemId(repairRequest.UserId);
+
+            var oldDevice = new { item.Id, item.Status, item.AddressId };
+            var oldRepair = new { repair.Id, repair.Status, repair.EndDate, repair.Diagnosis, repair.AddressId };
 
             repair.Status = RepairStatus.Completed;
             repair.EndDate = repairRequest.EndDate;
@@ -87,6 +103,9 @@ public class RepairService : IRepairService
 
             await _repository.Update(item);
             await _repairRepository.Update(repair);
+
+            await _auditLog.LogAsync(AuditActions.CompleteRepair, nameof(Repair), repair.Id.ToString(), oldRepair, repair);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), oldDevice, new { item.Id, item.Status, item.AddressId });
 
             return Result.Ok();
         }
@@ -163,7 +182,7 @@ public class RepairService : IRepairService
         {
             return Result.Fail(new NotFoundError(ex.Message));
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             return Result.Fail(new Error("Произошла ошибка при генерации документа!"));
         }

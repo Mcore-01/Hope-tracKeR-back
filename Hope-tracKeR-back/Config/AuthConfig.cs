@@ -21,6 +21,5 @@ public static class AuthConfig
                     ValidateIssuerSigningKey = true,
                 };
             });
-
     }
 }

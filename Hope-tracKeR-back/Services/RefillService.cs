@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentResults;
 using FluentValidation;
+using Hope_tracKeR_back.Constants;
 using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.DTOs.Requests;
@@ -19,43 +20,55 @@ public class RefillService : IRefillService
     private readonly IMapper _mapper;
     private readonly IValidator<StartRefillRequest> _startRefillValidator;
     private readonly IValidator<CompleteRefillRequest> _completeRefillValidator;
+    private readonly IAuditLogService _auditLog;
+
     public RefillService(IItemRepository<Cartridge> itemRepository, IMapper mapper, IValidator<StartRefillRequest> startRefillValidator,
-        IValidator<CompleteRefillRequest> completeRefillValidator, IRefillRepository refillRepository)
+        IValidator<CompleteRefillRequest> completeRefillValidator, IRefillRepository refillRepository, IAuditLogService auditLog)
     {
         _repository = itemRepository;
         _mapper = mapper;
         _startRefillValidator = startRefillValidator;
         _completeRefillValidator = completeRefillValidator;
         _refillRepository = refillRepository;
+        _auditLog = auditLog;
     }
 
     public async Task<Result<int>> StartRefill(StartRefillRequest refillRequest)
     {
+        var validationResult = await _startRefillValidator.ValidateAsync(refillRequest);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join("\n", validationResult.Errors);
+            return Result.Fail<int>(new ValidationError(errors));
+        }
+
         try
         {
-            var validationResult = await _startRefillValidator.ValidateAsync(refillRequest);
-            if (!validationResult.IsValid)
-            {
-                var errors = string.Join("\n", validationResult.Errors);
-                return Result.Fail<int>(new ValidationError(errors));
-            }
-
             var refill = _mapper.Map<Refill>(refillRequest);
             refill.Status = RefillStatus.InProgress;
 
             var item = await _repository.GetById(refill.ItemId);
+            var oldCartridge = new { item.Id, item.Status, item.AddressId };
+
             item.Status = CartridgeStatus.Refilling;
             item.AddressId = refill.AddressId;
 
             await _repository.Update(item);
 
-            var itemId = await _refillRepository.Create(refill);
+            var refillId = await _refillRepository.Create(refill);
 
-            return Result.Ok(itemId);
+            await _auditLog.LogAsync(AuditActions.StartRefill, nameof(Refill), refillId.ToString(), null, refill);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Cartridge), item.Id.ToString(), oldCartridge, new { item.Id, item.Status, item.AddressId });
+
+            return Result.Ok(refillId);
         }
         catch (InvalidOperationException ex)
         {
             return Result.Fail<int>(new InvalidOperationError(ex.Message));
+        }
+        catch (NullReferenceException ex)
+        {
+            return Result.Fail<int>(new NotFoundError(ex.Message));
         }
         catch (Exception ex)
         {
@@ -65,27 +78,33 @@ public class RefillService : IRefillService
 
     public async Task<Result> CompleteRefill(CompleteRefillRequest refillRequest)
     {
+        var validationResult = await _completeRefillValidator.ValidateAsync(refillRequest);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join("\n", validationResult.Errors);
+            return Result.Fail(new ValidationError(errors));
+        }
+
         try
         {
-            var validationResult = await _completeRefillValidator.ValidateAsync(refillRequest);
-            if (!validationResult.IsValid)
-            {
-                var errors = string.Join("\n", validationResult.Errors);
-                return Result.Fail(new ValidationError(errors));
-            }
-
             var item = await _repository.GetById(refillRequest.ItemId);
-            var repair = await _refillRepository.GetRefillByItemId(refillRequest.ItemId);
+            var refill = await _refillRepository.GetRefillByItemId(refillRequest.ItemId);
 
-            repair.Status = RefillStatus.Completed;
-            repair.EndDate = refillRequest.EndDate;
-            repair.AddressId = refillRequest.AddressId;
+            var oldCartridge = new { item.Id, item.Status, item.AddressId };
+            var oldRefill = new { refill.Id, refill.Status, refill.EndDate, refill.AddressId };
+
+            refill.Status = RefillStatus.Completed;
+            refill.EndDate = refillRequest.EndDate;
+            refill.AddressId = refillRequest.AddressId;
 
             item.AddressId = refillRequest.AddressId;
             item.Status = CartridgeStatus.InStock;
 
             await _repository.Update(item);
-            await _refillRepository.Update(repair);
+            await _refillRepository.Update(refill);
+
+            await _auditLog.LogAsync(AuditActions.CompleteRefill, nameof(Refill), refill.Id.ToString(), oldRefill, refill);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Cartridge), item.Id.ToString(), oldCartridge, new { item.Id, item.Status, item.AddressId });
 
             return Result.Ok();
         }
@@ -154,7 +173,7 @@ public class RefillService : IRefillService
         {
             return Result.Fail(new NotFoundError(ex.Message));
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             return Result.Fail(new Error("Произошла ошибка при генерации документа!"));
         }
