@@ -12,5 +12,7 @@ public class ItemFilter
     public int? AddressId { get; set; }
     public int? BrandId { get; set; }
 
+    public string? PrinterModel { get; set; }
+
     public Dictionary<string, string>? Attributes { get; set; }
 }
