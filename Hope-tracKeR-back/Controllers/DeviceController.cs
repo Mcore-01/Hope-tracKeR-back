@@ -91,7 +91,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, D
     }
 
     [HttpPost("end_repair")]
-    public async Task<ActionResult> CompleteRepair([FromBody] CompleteRepairRequest repair)
+    public async Task<ActionResult> CompleteRepairDevice([FromBody] CompleteRepairRequest repair)
     {
         var result = await _repairService.CompleteRepair(repair);
 
