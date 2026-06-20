@@ -112,54 +112,52 @@ public class RepairService : IRepairService
 
             using var stream = new MemoryStream();
 
-            using (var doc = DocX.Create(stream))
+            using var doc = DocX.Create(stream);
+            doc.InsertParagraph("АКТ ПРИЕМА-ПЕРЕДАЧИ").FontSize(16).Bold().Alignment = Alignment.center;
+
+            doc.InsertParagraph("техники в ремонт").FontSize(14).Bold().Alignment = Alignment.center;
+
+            doc.InsertParagraph($"№ {repair.Id}").FontSize(14).Bold().Alignment = Alignment.center;
+            doc.InsertParagraph();
+
+            doc.InsertParagraph($"«{repair.StartDate:dd}» {repair.StartDate.Month.ToString().PadLeft(2, '0')} {repair.StartDate:yyyy} г.");
+            doc.InsertParagraph();
+
+            doc.InsertParagraph($"Текущее местоположение: {repair.Address.Branch}, {repair.Address.Building}, {repair.Address.Floor}, {repair.Address.Room}");
+            doc.InsertParagraph();
+
+            doc.InsertParagraph("Оборудование, передаваемое в ремонт:").Bold();
+
+            var table = doc.AddTable(2, 4);
+
+            table.Rows[0].Cells[0].Paragraphs.First().Append("Идентификатор отчета").Bold();
+            table.Rows[0].Cells[1].Paragraphs.First().Append("Наименование").Bold();
+            table.Rows[0].Cells[2].Paragraphs.First().Append("Серийный номер").Bold();
+            table.Rows[0].Cells[3].Paragraphs.First().Append("Неисправность").Bold();
+
+            table.Rows[1].Cells[0].Paragraphs.First().Append(repair.ItemId.ToString());
+            table.Rows[1].Cells[1].Paragraphs.First().Append(repair.Item.Name);
+            table.Rows[1].Cells[2].Paragraphs.First().Append(repair.Item.SerialNumber);
+            table.Rows[1].Cells[3].Paragraphs.First().Append(repair.Description);
+
+            doc.InsertTable(table);
+            doc.InsertParagraph();
+
+            if (!string.IsNullOrEmpty(repair.Diagnosis))
             {
-                doc.InsertParagraph("АКТ ПРИЕМА-ПЕРЕДАЧИ").FontSize(16).Bold().Alignment = Alignment.center;
-
-                doc.InsertParagraph("техники в ремонт").FontSize(14).Bold().Alignment = Alignment.center;
-
-                doc.InsertParagraph($"№ {repair.Id}").FontSize(14).Bold().Alignment = Alignment.center;
+                doc.InsertParagraph($"Результаты диагностики: {repair.Diagnosis}").Bold();
                 doc.InsertParagraph();
-
-                doc.InsertParagraph($"«{repair.StartDate:dd}» {repair.StartDate.Month.ToString().PadLeft(2, '0')} {repair.StartDate:yyyy} г.");
-                doc.InsertParagraph();
-
-                doc.InsertParagraph($"Текущее местоположение: {repair.Address.Branch}, {repair.Address.Building}, {repair.Address.Floor}, {repair.Address.Room}");
-                doc.InsertParagraph();
-
-                doc.InsertParagraph("Оборудование, передаваемое в ремонт:").Bold();
-
-                var table = doc.AddTable(2, 4);
-
-                table.Rows[0].Cells[0].Paragraphs.First().Append("Идентификатор отчета").Bold();
-                table.Rows[0].Cells[1].Paragraphs.First().Append("Наименование").Bold();
-                table.Rows[0].Cells[2].Paragraphs.First().Append("Серийный номер").Bold();
-                table.Rows[0].Cells[3].Paragraphs.First().Append("Неисправность").Bold();
-
-                table.Rows[1].Cells[0].Paragraphs.First().Append(repair.ItemId.ToString());
-                table.Rows[1].Cells[1].Paragraphs.First().Append(repair.Item.Name);
-                table.Rows[1].Cells[2].Paragraphs.First().Append(repair.Item.SerialNumber);
-                table.Rows[1].Cells[3].Paragraphs.First().Append(repair.Description);
-
-                doc.InsertTable(table);
-                doc.InsertParagraph();
-
-                if (!string.IsNullOrEmpty(repair.Diagnosis))
-                {
-                    doc.InsertParagraph($"Результаты диагностики: {repair.Diagnosis}").Bold();
-                    doc.InsertParagraph();
-                }
-
-                doc.InsertParagraph($"Статус ремонта: {repair.Status.GetDisplayName()}").Bold();
-                doc.InsertParagraph();
-
-                doc.InsertParagraph($"Ответственный за ремонт: {repair.User.FullName}").Bold();
-                doc.InsertParagraph();
-
-                doc.Save();
-
-                return Result.Ok(stream.ToArray());
             }
+
+            doc.InsertParagraph($"Статус ремонта: {repair.Status.GetDisplayName()}").Bold();
+            doc.InsertParagraph();
+
+            doc.InsertParagraph($"Ответственный за ремонт: {repair.User.FullName}").Bold();
+            doc.InsertParagraph();
+
+            doc.Save();
+
+            return Result.Ok(stream.ToArray());
         }
         catch (NullReferenceException ex)
         {

@@ -111,46 +111,44 @@ public class RefillService : IRefillService
 
             using var stream = new MemoryStream();
 
-            using (var doc = DocX.Create(stream))
-            {
-                doc.InsertParagraph("АКТ ПРИЕМА-ПЕРЕДАЧИ").FontSize(16).Bold().Alignment = Alignment.center;
+            using var doc = DocX.Create(stream);
+            doc.InsertParagraph("АКТ ПРИЕМА-ПЕРЕДАЧИ").FontSize(16).Bold().Alignment = Alignment.center;
 
-                doc.InsertParagraph("картриджа на заправку").FontSize(14).Bold().Alignment = Alignment.center;
+            doc.InsertParagraph("картриджа на заправку").FontSize(14).Bold().Alignment = Alignment.center;
 
-                doc.InsertParagraph($"№ {refill.Id}").FontSize(14).Bold().Alignment = Alignment.center;
-                doc.InsertParagraph();
+            doc.InsertParagraph($"№ {refill.Id}").FontSize(14).Bold().Alignment = Alignment.center;
+            doc.InsertParagraph();
 
-                doc.InsertParagraph($"«{refill.StartDate:dd}» {refill.StartDate.Month.ToString().PadLeft(2, '0')} {refill.StartDate:yyyy} г.");
-                doc.InsertParagraph();
+            doc.InsertParagraph($"«{refill.StartDate:dd}» {refill.StartDate.Month.ToString().PadLeft(2, '0')} {refill.StartDate:yyyy} г.");
+            doc.InsertParagraph();
 
-                doc.InsertParagraph($"Текущее местоположение: {refill.Address.Branch}, {refill.Address.Building}, {refill.Address.Floor}, {refill.Address.Room}");
-                doc.InsertParagraph();
+            doc.InsertParagraph($"Текущее местоположение: {refill.Address.Branch}, {refill.Address.Building}, {refill.Address.Floor}, {refill.Address.Room}");
+            doc.InsertParagraph();
 
-                doc.InsertParagraph("Картридж, передаваемый на заправку:").Bold();
+            doc.InsertParagraph("Картридж, передаваемый на заправку:").Bold();
 
-                var table = doc.AddTable(2, 3);
+            var table = doc.AddTable(2, 3);
 
-                table.Rows[0].Cells[0].Paragraphs.First().Append("Идентификатор отчета").Bold();
-                table.Rows[0].Cells[1].Paragraphs.First().Append("Наименование").Bold();
-                table.Rows[0].Cells[2].Paragraphs.First().Append("Модель принтера").Bold();
+            table.Rows[0].Cells[0].Paragraphs.First().Append("Идентификатор отчета").Bold();
+            table.Rows[0].Cells[1].Paragraphs.First().Append("Наименование").Bold();
+            table.Rows[0].Cells[2].Paragraphs.First().Append("Модель принтера").Bold();
 
-                table.Rows[1].Cells[0].Paragraphs.First().Append(refill.ItemId.ToString());
-                table.Rows[1].Cells[1].Paragraphs.First().Append(refill.Item.Name);
-                table.Rows[1].Cells[2].Paragraphs.First().Append(refill.Item.PrinterModel);
+            table.Rows[1].Cells[0].Paragraphs.First().Append(refill.ItemId.ToString());
+            table.Rows[1].Cells[1].Paragraphs.First().Append(refill.Item.Name);
+            table.Rows[1].Cells[2].Paragraphs.First().Append(refill.Item.PrinterModel);
 
-                doc.InsertTable(table);
-                doc.InsertParagraph();
+            doc.InsertTable(table);
+            doc.InsertParagraph();
 
-                doc.InsertParagraph($"Статус заправки: {refill.Status.GetDisplayName()}").Bold();
-                doc.InsertParagraph();
+            doc.InsertParagraph($"Статус заправки: {refill.Status.GetDisplayName()}").Bold();
+            doc.InsertParagraph();
 
-                doc.InsertParagraph($"Ответственное лицо: {refill.User.FullName}").Bold();
-                doc.InsertParagraph();
+            doc.InsertParagraph($"Ответственное лицо: {refill.User.FullName}").Bold();
+            doc.InsertParagraph();
 
-                doc.Save();
+            doc.Save();
 
-                return Result.Ok(stream.ToArray());
-            }
+            return Result.Ok(stream.ToArray());
         }
         catch (NullReferenceException ex)
         {

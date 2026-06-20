@@ -109,6 +109,20 @@ public class CartridgeController : ControllerBase, IItemController<CartridgeRequ
         return HandleError(result.Errors.First());
     }
 
+    [HttpPost("refill_act/{itemID}")]
+    public async Task<IActionResult> GenerateRefillToDocx(int itemID)
+    {
+        var result = await _refillService.GenerateRefillToDocx(itemID);
+
+        if (result.IsSuccess)
+            return File(result.Value, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"Акт_приема_передачи.docx");
+
+        if (result.IsSuccess)
+            return Ok();
+
+        return HandleError(result.Errors.First());
+    }
+
     private ActionResult HandleError(IError error)
     {
         return error switch
