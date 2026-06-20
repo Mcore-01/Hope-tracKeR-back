@@ -57,8 +57,8 @@ public class RepairService : IRepairService
 
             var repairId = await _repairRepository.Create(repair);
 
-            await _auditLog.LogAsync(AuditActions.StartRepair, nameof(Repair), repairId.ToString(), null, repair);
-            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), oldDevice, new { item.Id, item.Status, item.AddressId });
+            await _auditLog.LogAsync(AuditActions.StartRepair, nameof(Repair), repairId.ToString(), repair);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), new { item.Id, item.Status, item.AddressId });
 
             return Result.Ok(repairId);
         }
@@ -104,8 +104,8 @@ public class RepairService : IRepairService
             await _repository.Update(item);
             await _repairRepository.Update(repair);
 
-            await _auditLog.LogAsync(AuditActions.CompleteRepair, nameof(Repair), repair.Id.ToString(), oldRepair, repair);
-            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), oldDevice, new { item.Id, item.Status, item.AddressId });
+            await _auditLog.LogAsync(AuditActions.CompleteRepair, nameof(Repair), repair.Id.ToString(), repair);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), new { item.Id, item.Status, item.AddressId });
 
             return Result.Ok();
         }

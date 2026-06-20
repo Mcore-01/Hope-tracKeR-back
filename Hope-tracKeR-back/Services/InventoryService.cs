@@ -34,7 +34,7 @@ public class InventoryService : IInventoryService
             item.Quantity += amount;
             await _repository.Update(item);
 
-            await _auditLog.LogAsync(AuditActions.IncreaseQuantity, nameof(Consumable), id.ToString(),  new { Quantity = oldQuantity },  new { Quantity = item.Quantity, Added = amount });
+            await _auditLog.LogAsync(AuditActions.IncreaseQuantity, nameof(Consumable), id.ToString(), new { Quantity = item.Quantity, Added = amount });
 
             return Result.Ok();
         }
@@ -70,7 +70,7 @@ public class InventoryService : IInventoryService
             item.Quantity -= amount;
             await _repository.Update(item);
 
-            await _auditLog.LogAsync(AuditActions.DecreaseQuantity, nameof(Consumable), id.ToString(), new { Quantity = oldQuantity }, new { Quantity = item.Quantity, Removed = amount });
+            await _auditLog.LogAsync(AuditActions.DecreaseQuantity, nameof(Consumable), id.ToString(), new { Quantity = item.Quantity, Removed = amount });
 
             return Result.Ok();
         }

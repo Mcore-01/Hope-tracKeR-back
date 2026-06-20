@@ -16,6 +16,7 @@ public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemServi
     protected readonly IMapper _mapper;
     protected readonly IValidator<TRequest> _validator;
     protected readonly IAuditLogService _auditLog;
+    protected readonly string EntityName = typeof(TEntity).Name;
 
     protected BaseItemService(IItemRepository<TEntity> repository, IMapper mapper, IValidator<TRequest> validator, IAuditLogService auditLog)
     {
@@ -38,7 +39,7 @@ public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemServi
         {
             var entity = _mapper.Map<TEntity>(itemModify);
             var id = await _repository.Create(entity);
-            await _auditLog.LogAsync(AuditActions.Create, nameof(TEntity), id.ToString(), null, entity);
+            await _auditLog.LogAsync(AuditActions.Create, EntityName, id.ToString(), entity);
             return Result.Ok(id);
         }
         catch (InvalidOperationException ex)
@@ -72,7 +73,7 @@ public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemServi
             var entity = await _repository.GetById(id);
             if (entity == null)
             {
-                return Result.Fail<TResponse>(new NotFoundError(nameof(TEntity), id));
+                return Result.Fail<TResponse>(new NotFoundError(EntityName, id));
             }
 
             var response = _mapper.Map<TResponse>(entity);
@@ -100,15 +101,9 @@ public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemServi
         try
         {
             var entity = _mapper.Map<TEntity>(itemModify);
-            TEntity? oldEntity = null;
-            try
-            {
-                oldEntity = await _repository.GetById(entity.Id);
-            }
-            catch (NullReferenceException) { }
 
             await _repository.Update(entity);
-            await _auditLog.LogAsync(AuditActions.Update, nameof(TEntity), entity.Id.ToString(), oldEntity, entity);
+            await _auditLog.LogAsync(AuditActions.Update, EntityName, entity.Id.ToString(), entity);
             return Result.Ok();
         }
         catch (NullReferenceException ex)
@@ -137,7 +132,7 @@ public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemServi
             catch (NullReferenceException) { }
 
             await _repository.Remove(id);
-            await _auditLog.LogAsync(AuditActions.Delete, nameof(TEntity), id.ToString(), oldEntity, null);
+            await _auditLog.LogAsync(AuditActions.Delete, EntityName, id.ToString(), oldEntity);
             return Result.Ok();
         }
         catch (NullReferenceException ex)

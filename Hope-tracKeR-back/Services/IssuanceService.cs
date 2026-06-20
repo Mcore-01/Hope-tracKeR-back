@@ -57,8 +57,8 @@ public class IssuanceService : IIssuanceService
             var issuanceId = await _issuanceRepository.Create(issuance);
             await _repository.Update(item);
 
-            await _auditLog.LogAsync(AuditActions.Issue, nameof(Issuance), issuanceId.ToString(), null, issuance);
-            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), oldDevice, new { item.Id, item.Status, item.EmployeeId });
+            await _auditLog.LogAsync(AuditActions.Issue, nameof(Issuance), issuanceId.ToString(), issuance);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), new { item.Id, item.Status, item.EmployeeId });
 
             return Result.Ok();
         }

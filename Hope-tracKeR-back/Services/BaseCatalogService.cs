@@ -12,6 +12,7 @@ public abstract class BaseCatalogService<TEntity> : ICatalogService<TEntity> whe
     protected readonly ICatalogRepository<TEntity> Repository;
     protected readonly IValidator<TEntity> Validator;
     protected readonly IAuditLogService AuditLog;
+    protected readonly string EntityName = typeof(TEntity).Name;
 
     protected BaseCatalogService(ICatalogRepository<TEntity> repository, IValidator<TEntity> validator, IAuditLogService auditLog)
     {
@@ -40,14 +41,14 @@ public abstract class BaseCatalogService<TEntity> : ICatalogService<TEntity> whe
             var item = await Repository.GetById(id);
             if (item is null)
             {
-                return Result.Fail<TEntity>(new NotFoundError(nameof(TEntity), id));
+                return Result.Fail<TEntity>(new NotFoundError(EntityName, id));
             }
 
             return Result.Ok(item);
         }
         catch (NullReferenceException ex)
         {
-            return Result.Fail<TEntity>(new NotFoundError(nameof(TEntity), id));
+            return Result.Fail<TEntity>(new NotFoundError(EntityName, id));
         }
         catch (Exception ex)
         {
@@ -67,7 +68,7 @@ public abstract class BaseCatalogService<TEntity> : ICatalogService<TEntity> whe
         try
         {
             var id = await Repository.Create(entity);
-            await AuditLog.LogAsync(AuditActions.Create, nameof(TEntity), id.ToString(), null, entity);
+            await AuditLog.LogAsync(AuditActions.Create, EntityName, id.ToString(), entity);
             return Result.Ok(id);
         }
         catch (InvalidOperationException ex)
@@ -93,16 +94,10 @@ public abstract class BaseCatalogService<TEntity> : ICatalogService<TEntity> whe
 
         try
         {
-            TEntity? oldEntity = null;
-            try
-            {
-                if (entityId is not null)
-                    oldEntity = await Repository.GetById(int.Parse(entityId));
-            }
-            catch (NullReferenceException) { }
+  
 
             await Repository.Update(entity);
-            await AuditLog.LogAsync(AuditActions.Update, nameof(TEntity), entityId ?? "unknown", oldEntity, entity);
+            await AuditLog.LogAsync(AuditActions.Update, EntityName, entityId ?? "unknown", entity);
             return Result.Ok();
         }
         catch (NullReferenceException ex)
@@ -131,7 +126,7 @@ public abstract class BaseCatalogService<TEntity> : ICatalogService<TEntity> whe
             catch (NullReferenceException) { }
 
             await Repository.Remove(id);
-            await AuditLog.LogAsync(AuditActions.Delete, nameof(TEntity), id.ToString(), oldEntity, null);
+            await AuditLog.LogAsync(AuditActions.Delete, EntityName, id.ToString(), oldEntity);
             return Result.Ok();
         }
         catch (NullReferenceException ex)

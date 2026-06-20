@@ -57,8 +57,8 @@ public class RefillService : IRefillService
 
             var refillId = await _refillRepository.Create(refill);
 
-            await _auditLog.LogAsync(AuditActions.StartRefill, nameof(Refill), refillId.ToString(), null, refill);
-            await _auditLog.LogAsync(AuditActions.Update, nameof(Cartridge), item.Id.ToString(), oldCartridge, new { item.Id, item.Status, item.AddressId });
+            await _auditLog.LogAsync(AuditActions.StartRefill, nameof(Refill), refillId.ToString(), refill);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Cartridge), item.Id.ToString(), new { item.Id, item.Status, item.AddressId });
 
             return Result.Ok(refillId);
         }
@@ -103,8 +103,8 @@ public class RefillService : IRefillService
             await _repository.Update(item);
             await _refillRepository.Update(refill);
 
-            await _auditLog.LogAsync(AuditActions.CompleteRefill, nameof(Refill), refill.Id.ToString(), oldRefill, refill);
-            await _auditLog.LogAsync(AuditActions.Update, nameof(Cartridge), item.Id.ToString(), oldCartridge, new { item.Id, item.Status, item.AddressId });
+            await _auditLog.LogAsync(AuditActions.CompleteRefill, nameof(Refill), refill.Id.ToString(), refill);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Cartridge), item.Id.ToString(), new { item.Id, item.Status, item.AddressId });
 
             return Result.Ok();
         }

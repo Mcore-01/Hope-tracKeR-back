@@ -51,8 +51,8 @@ public class WriteOffService : IWriteOffService
             var writeOffId = await _writeOffRepository.Create(writeOff);
             await _repository.Update(item);
 
-            await _auditLog.LogAsync(AuditActions.WriteOff, nameof(WriteOff), writeOffId.ToString(), null, writeOff);
-            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), oldDevice, new { item.Id, item.Status });
+            await _auditLog.LogAsync(AuditActions.WriteOff, nameof(WriteOff), writeOffId.ToString(), writeOff);
+            await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), new { item.Id, item.Status });
 
             return Result.Ok();
         }

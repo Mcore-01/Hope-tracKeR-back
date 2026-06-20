@@ -19,7 +19,7 @@ public class AuditLogService : IAuditLogService
         _logger = logger;
     }
 
-    public async Task LogAsync(string action, string entityName, string entityId, object? oldValues, object? newValues)
+    public async Task LogAsync(string action, string entityName, string entityId, object? newValues)
     {
         try
         {
@@ -30,14 +30,11 @@ public class AuditLogService : IAuditLogService
                 Action = action,
                 EntityName = entityName,
                 EntityId = entityId,
-                OldValues = Serialize(oldValues),
-                NewValues = Serialize(newValues) ?? "{}"
+                Values = Serialize(newValues) ?? "{}"
             };
 
             await _context.AuditLogs.AddAsync(auditLog);
             await _context.SaveChangesAsync();
-
-            _logger.LogInformation("Audit: {Action} {EntityName} {EntityId} by {UserLogin}", action, entityName, entityId, auditLog.UserLogin);
         }
         catch (Exception ex)
         {
