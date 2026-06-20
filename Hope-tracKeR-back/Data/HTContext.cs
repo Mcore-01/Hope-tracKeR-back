@@ -73,6 +73,15 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
             new Consumable { Id = 11, Name = "Стикеры самоклеящиеся", AddressId = 1, BrandId = 7, Quantity = 15 }
         );
 
+        modelBuilder.Entity<Cartridge>().HasData(
+            new Cartridge { Id = 100, Name = "Тонер-картридж Samsung ML-1660", AddressId = 1, BrandId = 1, Status = CartridgeStatus.InStock, PrinterModel = "ML-1660" },
+            new Cartridge { Id = 101, Name = "Тонер-картридж Samsung SCX-4521F", AddressId = 1, BrandId = 1, Status = CartridgeStatus.Empty, PrinterModel = "SCX-4521F" },
+            new Cartridge { Id = 102, Name = "Картридж LG Printronix", AddressId = 1, BrandId = 3, Status = CartridgeStatus.Refilling, PrinterModel = "Printronix" },
+            new Cartridge { Id = 103, Name = "Тонер Dexp DPP-250", AddressId = 2, BrandId = 2, Status = CartridgeStatus.Installed, PrinterModel = "DPP-250" },
+            new Cartridge { Id = 104, Name = "Картридж Samsung CLP-315", AddressId = 2, BrandId = 1, Status = CartridgeStatus.Installed, PrinterModel = "CLP-315" },
+            new Cartridge { Id = 105, Name = "Картридж LG LBP-1210", AddressId = 3, BrandId = 3, Status = CartridgeStatus.Installed, PrinterModel = "LBP-1210" }
+        );
+
         modelBuilder.Entity<ItemAttribute>().HasData(
             new ItemAttribute { Id = 1, ItemId = 1, Name = "Диагональ", Value = "27 дюмов" },
             new ItemAttribute { Id = 2, ItemId = 1, Name = "Разрешение", Value = "2560x1440" },
@@ -97,6 +106,7 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
     public DbSet<Item> Items { get; set; }
     public DbSet<Device> Devices { get; set; }
     public DbSet<Consumable> Consumables { get; set; }
+    public DbSet<Cartridge> Cartridges { get; set; }
     public DbSet<ItemAttribute> ItemAttributes { get; set; }
     public DbSet<Repair> Repairs { get; set; }
     public DbSet<WriteOff> WriteOffs { get; set; }
