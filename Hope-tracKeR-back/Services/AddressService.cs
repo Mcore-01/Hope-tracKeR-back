@@ -7,7 +7,7 @@ using Hope_tracKeR_back.Services.Interfaces;
 
 namespace Hope_tracKeR_back.Services;
 
-public class AddressService : ICatalogService<Address>
+public class AddressService : BaseCatalogService<Address>
 {
     private readonly ICatalogRepository<Address> _repository;
     private readonly IValidator<Address> _validator;
