@@ -24,7 +24,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, D
         _issuanceService = issuanceService;
     }
 
-    [HttpPost("device/filter")]
+    [HttpPost("devices/filter")]
     public async Task<ActionResult<IEnumerable<DeviceResponse>>> GetByFilters([FromBody] ItemFilter filter)
     {
         var result = await _service.GetByFilters(filter);

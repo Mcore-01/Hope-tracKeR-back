@@ -21,7 +21,7 @@ public class ConsumableController : ControllerBase, IItemController<ConsumableRe
         _inventoryService = inventoryService;
     }
 
-    [HttpPost("Consumables/filter")]
+    [HttpPost("сonsumables/filter")]
     public async Task<ActionResult<IEnumerable<ConsumableResponse>>> GetByFilters([FromBody] ItemFilter filter)
     {
         var result = await _service.GetByFilters(filter);
