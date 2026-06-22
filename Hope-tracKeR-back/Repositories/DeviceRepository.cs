@@ -1,4 +1,5 @@
 ﻿using Hope_tracKeR_back.Data;
+using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
@@ -30,8 +31,9 @@ public class DeviceRepository : IItemRepository<Device>
             query = query.Where(i => i.Name.ToLower().Contains(searchField) || i.SerialNumber.ToLower().Contains(searchField));
         }
 
-        if (filter.Status.HasValue)
-            query = query.Where(i => i.Status == filter.Status.Value);
+        if (!string.IsNullOrWhiteSpace(filter.Status))
+            if (Enum.TryParse<DeviceStatus>(filter.Status, true, out var status))
+                query = query.Where(i => i.Status == status);
 
         if (filter.AddedDateFrom.HasValue)
             query = query.Where(i => i.AddedDate >= filter.AddedDateFrom.Value);
@@ -83,12 +85,31 @@ public class DeviceRepository : IItemRepository<Device>
 
     public async Task Update(Device item)
     {
-        var itemIsExist = _context.Devices.Include(i => i.Attributes).Any(i => i.Id == item.Id);
+        var existing = await _context.Devices
+        .Include(d => d.Attributes)
+        .FirstOrDefaultAsync(d => d.Id == item.Id);
 
-        if (!itemIsExist)
+        if (existing == null)
             throw new NullReferenceException($"Объект с ID {item.Id} не найден!");
-        
-        _context.Devices.Update(item);
+
+        existing.Name = item.Name;
+        existing.SerialNumber = item.SerialNumber;
+        existing.Status = item.Status;
+        existing.AddedDate = item.AddedDate;
+        existing.AddressId = item.AddressId;
+        existing.BrandId = item.BrandId;
+        existing.CategoryId = item.CategoryId;
+        existing.EmployeeId = item.EmployeeId;
+
+        _context.ItemAttributes.RemoveRange(existing.Attributes);
+
+        var newAttributes = item.Attributes.Select(a => new ItemAttribute {
+            Name = a.Name,
+            Value = a.Value,
+            ItemId = existing.Id 
+        }).ToList();
+
+        await _context.ItemAttributes.AddRangeAsync(newAttributes);
 
         await _context.SaveChangesAsync();
     }
