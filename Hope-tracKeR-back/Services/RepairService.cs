@@ -88,7 +88,7 @@ public class RepairService : IRepairService
         try
         {
             var item = await _repository.GetById(repairRequest.ItemId);
-            var repair = await _repairRepository.GetRepairByItemId(repairRequest.UserId);
+            var repair = await _repairRepository.GetRepairByItemId(repairRequest.ItemId);
 
             var oldDevice = new { item.Id, item.Status, item.AddressId };
             var oldRepair = new { repair.Id, repair.Status, repair.EndDate, repair.Diagnosis, repair.AddressId };
