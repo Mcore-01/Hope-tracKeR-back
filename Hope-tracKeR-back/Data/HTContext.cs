@@ -52,9 +52,12 @@ public class HTContext(DbContextOptions<HTContext> options) : DbContext(options)
         );
 
         modelBuilder.Entity<Address>().HasData(
-            new Address { Id = 1, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 101" },
-            new Address { Id = 2, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 102" },
-            new Address { Id = 3, Branch = "ул. Толстого 31", Building = "Корпус 4", Floor = 3, Room = "Кабинет 314" }
+            new Address { Id = 1, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 101", AddressType = AddressType.Office },
+            new Address { Id = 2, Branch = "ул. Пушкина 1", Building = "Корпус 1", Floor = 1, Room = "Кабинет 102", AddressType = AddressType.Office },
+            new Address { Id = 3, Branch = "ул. Пушкина 1", Building = "Корпус 2", Floor = 2, Room = "Кабинет 206", AddressType = AddressType.Warehouse },
+            new Address { Id = 5, Branch = "ул. Толстого 31", Building = "Корпус 4", Floor = 3, Room = "Кабинет 314", AddressType = AddressType.Office },
+            new Address { Id = 6, Branch = "ул. Толстого 31", Building = "Корпус 4", Floor = 1, Room = "Кабинет 114", AddressType = AddressType.Office },
+            new Address { Id = 7, Branch = "ул. Толстого 31", Building = "Корпус 1", Floor = 1, Room = "Кабинет 102", AddressType = AddressType.Warehouse }
         );
 
         modelBuilder.Entity<Device>().HasData(
