@@ -57,5 +57,17 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Branch}, {src.Address.Building}, {src.Address.Floor}, {src.Address.Room}"))
             .ForMember(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.ToDictionary(a => a.Name, a => a.Value)))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+        CreateMap<StartRefillRequest, Refill>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.EndDate, opt => opt.Ignore())
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
+            .ForMember(dest => dest.Item, opt => opt.Ignore())
+            .ForMember(dest => dest.User, opt => opt.Ignore())
+            .ForMember(dest => dest.Address, opt => opt.Ignore())
+            .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.ItemId))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+            .ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.AddressId))
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate));
     }
 }

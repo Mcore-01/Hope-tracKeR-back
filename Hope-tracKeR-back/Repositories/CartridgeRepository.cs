@@ -1,4 +1,5 @@
 ﻿using Hope_tracKeR_back.Data;
+using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
@@ -36,6 +37,10 @@ public class CartridgeRepository : IItemRepository<Cartridge>
             var searchField = filter.SearchField.ToLower();
             query = query.Where(i => i.Name.ToLower().Contains(searchField) || i.PrinterModel.ToLower().Contains(searchField));
         }
+
+        if (!string.IsNullOrWhiteSpace(filter.Status))
+            if (Enum.TryParse<CartridgeStatus>(filter.Status, true, out var status))
+                query = query.Where(i => i.Status == status);
 
         if (filter.AddressId.HasValue)
             query = query.Where(i => i.AddressId == filter.AddressId.Value);
