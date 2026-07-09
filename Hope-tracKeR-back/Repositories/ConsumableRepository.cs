@@ -51,7 +51,10 @@ public class ConsumableRepository : IItemRepository<Consumable>
             }
         }
 
-        var items = await query.ToListAsync();
+        var items = await query
+            .Skip((filter.PageNumber - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .ToListAsync();
         return items;
     }
 

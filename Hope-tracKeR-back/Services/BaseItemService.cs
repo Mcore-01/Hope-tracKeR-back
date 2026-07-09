@@ -4,13 +4,14 @@ using FluentValidation;
 using Hope_tracKeR_back.Constants;
 using Hope_tracKeR_back.Errors;
 using Hope_tracKeR_back.Models.DTOs.Requests;
+using Hope_tracKeR_back.Models.DTOs.Responses;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Hope_tracKeR_back.Services.Interfaces;
 
 namespace Hope_tracKeR_back.Services;
 
-public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemService<TRequest, TResponse> where TEntity : Item
+public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemService<TRequest, TResponse> where TEntity : Item where TResponse : class
 {
     protected readonly IItemRepository<TEntity> _repository;
     protected readonly IMapper _mapper;
@@ -52,17 +53,18 @@ public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemServi
         }
     }
 
-    public virtual async Task<Result<IEnumerable<TResponse>>> GetByFilters(ItemFilter filter)
+    public virtual async Task<Result<PagedListResponse<TResponse>>> GetByFilters(ItemFilter filter)
     {
         try
         {
             var items = await _repository.GetByFilters(filter);
             var response = items.Select(_mapper.Map<TResponse>);
-            return Result.Ok(response);
+            var pagedList = new PagedListResponse<TResponse> { PageNumber = filter.PageNumber, PageSize = filter.PageSize, Items = response };
+            return Result.Ok(pagedList);
         }
         catch (Exception ex)
         {
-            return Result.Fail<IEnumerable<TResponse>>(new Error($"Произошла ошибка: {ex.Message}"));
+            return Result.Fail<PagedListResponse<TResponse>>(new Error($"Произошла ошибка: {ex.Message}"));
         }
     }
 

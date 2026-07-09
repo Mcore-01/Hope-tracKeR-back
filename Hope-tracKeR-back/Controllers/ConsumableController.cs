@@ -21,7 +21,7 @@ public class ConsumableController : ControllerBase, IItemController<ConsumableRe
     }
 
     [HttpPost("сonsumables/filter")]
-    public async Task<ActionResult<IEnumerable<ConsumableResponse>>> GetByFilters([FromBody] ItemFilter filter)
+    public async Task<ActionResult<PagedListResponse<ConsumableResponse>>> GetByFilters([FromBody] ItemFilter filter)
     {
         var result = await _service.GetByFilters(filter);
 

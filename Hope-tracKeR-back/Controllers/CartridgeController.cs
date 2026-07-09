@@ -22,7 +22,7 @@ public class CartridgeController : ControllerBase, IItemController<CartridgeRequ
     }
 
     [HttpPost("cartridges/filter")]
-    public async Task<ActionResult<IEnumerable<CartridgeResponse>>> GetByFilters([FromBody] ItemFilter filter)
+    public async Task<ActionResult<PagedListResponse<CartridgeResponse>>> GetByFilters([FromBody] ItemFilter filter)
     {
         var result = await _service.GetByFilters(filter);
 
