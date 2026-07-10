@@ -4,7 +4,10 @@ namespace Hope_tracKeR_back.Repositories.Interfaces;
 
 public interface IRepairRepository
 {
-    Task<int> Create(Repair repair);
+    Task Create(Repair repair);
     Task Update(Repair repair);
+    Task<Device> GetDeviceById(int deviceId);
+    Task UpdateDevice(Device device);
     Task<Repair> GetRepairByItemId(int itemId);
+    Task SaveChangesAsync();
 }

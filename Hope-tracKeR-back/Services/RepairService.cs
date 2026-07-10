@@ -15,17 +15,15 @@ namespace Hope_tracKeR_back.Services;
 
 public class RepairService : IRepairService
 {
-    private readonly IItemRepository<Device> _repository;
     private readonly IRepairRepository _repairRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<StartRepairRequest> _startRepairValidator;
     private readonly IValidator<CompleteRepairRequest> _completeRepairValidator;
     private readonly IAuditLogService _auditLog;
 
-    public RepairService(IItemRepository<Device> itemRepository, IMapper mapper, IValidator<StartRepairRequest> startRepairValidator,
+    public RepairService(IMapper mapper, IValidator<StartRepairRequest> startRepairValidator,
         IValidator<CompleteRepairRequest> completeRepairValidator, IRepairRepository repairRepository, IAuditLogService auditLog)
     {
-        _repository = itemRepository;
         _mapper = mapper;
         _startRepairValidator = startRepairValidator;
         _completeRepairValidator = completeRepairValidator;
@@ -47,20 +45,20 @@ public class RepairService : IRepairService
             var repair = _mapper.Map<Repair>(repairRequest);
             repair.Status = RepairStatus.InProgress;
 
-            var item = await _repository.GetById(repair.ItemId);
+            var item = await _repairRepository.GetDeviceById(repair.ItemId);
             var oldDevice = new { item.Id, item.Status, item.AddressId };
 
             item.Status = DeviceStatus.Repair;
             item.AddressId = repair.AddressId;
 
-            await _repository.Update(item);
+            await _repairRepository.UpdateDevice(item);
+            await _repairRepository.Create(repair);
+            await _repairRepository.SaveChangesAsync();
 
-            var repairId = await _repairRepository.Create(repair);
-
-            await _auditLog.LogAsync(AuditActions.StartRepair, nameof(Repair), repairId.ToString(), repair);
+            await _auditLog.LogAsync(AuditActions.StartRepair, nameof(Repair), repair.Id.ToString(), repair);
             await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), new { item.Id, item.Status, item.AddressId });
 
-            return Result.Ok(repairId);
+            return Result.Ok(repair.Id);
         }
         catch (InvalidOperationException ex)
         {
@@ -87,7 +85,7 @@ public class RepairService : IRepairService
 
         try
         {
-            var item = await _repository.GetById(repairRequest.ItemId);
+            var item = await _repairRepository.GetDeviceById(repairRequest.ItemId);
             var repair = await _repairRepository.GetRepairByItemId(repairRequest.ItemId);
 
             var oldDevice = new { item.Id, item.Status, item.AddressId };
@@ -101,8 +99,9 @@ public class RepairService : IRepairService
             item.AddressId = repairRequest.CurrentAddressId;
             item.Status = DeviceStatus.InStock;
 
-            await _repository.Update(item);
+            await _repairRepository.UpdateDevice(item);
             await _repairRepository.Update(repair);
+            await _repairRepository.SaveChangesAsync();
 
             await _auditLog.LogAsync(AuditActions.CompleteRepair, nameof(Repair), repair.Id.ToString(), repair);
             await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), new { item.Id, item.Status, item.AddressId });

@@ -1,5 +1,4 @@
 ﻿using DocumentFormat.OpenXml.Office2010.Excel;
-using FluentResults;
 using Hope_tracKeR_back.Data;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
@@ -15,24 +14,18 @@ public class RepairRepository : IRepairRepository
         _context = context;
     }
 
-    public  async Task<int> Create(Repair repair)
+    public  async Task Create(Repair repair)
     {
-        _context.Repairs.Add(repair);
-
-        await _context.SaveChangesAsync();
-
-        return repair.Id;
+        await _context.Repairs.AddAsync(repair);
     }
 
     public async Task Update(Repair repair)
     {
-        var repairIsExist = _context.Repairs.Any(r => r.Id == repair.Id);
+        var repairIsExist = await _context.Repairs.AnyAsync(r => r.Id == repair.Id);
         if (!repairIsExist)
             throw new NullReferenceException($"Объект с ID {repair.Id} не найден!");
 
         _context.Repairs.Update(repair);
-
-        await _context.SaveChangesAsync();
     }
 
     public async Task<Repair> GetRepairByItemId(int itemId)
@@ -48,5 +41,55 @@ public class RepairRepository : IRepairRepository
             throw new NullReferenceException($"Объект с ID {itemId} не найден!");
 
         return repair;
+    }
+
+    public async Task<Device> GetDeviceById(int deviceId)
+    {
+        var item = await _context.Devices
+            .Include(i => i.Address)
+            .Include(i => i.Brand)
+            .Include(i => i.Category)
+            .Include(i => i.Employee)
+            .Include(i => i.Attributes)
+            .FirstOrDefaultAsync(i => i.Id == deviceId);
+        if (item == default)
+            throw new NullReferenceException($"Объект с ID {deviceId} не найден!");
+
+        return item;
+    }
+
+    public async Task UpdateDevice(Device device)
+    {
+        var existing = await _context.Devices
+            .Include(d => d.Attributes)
+            .FirstOrDefaultAsync(d => d.Id == device.Id);
+
+        if (existing == null)
+            throw new NullReferenceException($"Объект с ID {device.Id} не найден!");
+
+        existing.Name = device.Name;
+        existing.SerialNumber = device.SerialNumber;
+        existing.Status = device.Status;
+        existing.AddedDate = device.AddedDate;
+        existing.AddressId = device.AddressId;
+        existing.BrandId = device.BrandId;
+        existing.CategoryId = device.CategoryId;
+        existing.EmployeeId = device.EmployeeId;
+
+        _context.ItemAttributes.RemoveRange(existing.Attributes);
+
+        var newAttributes = device.Attributes.Select(a => new ItemAttribute
+        {
+            Name = a.Name,
+            Value = a.Value,
+            ItemId = existing.Id
+        }).ToList();
+
+        await _context.ItemAttributes.AddRangeAsync(newAttributes);
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await _context.SaveChangesAsync();
     }
 }

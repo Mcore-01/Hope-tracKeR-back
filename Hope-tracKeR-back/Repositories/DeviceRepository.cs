@@ -89,8 +89,8 @@ public class DeviceRepository : IItemRepository<Device>
     public async Task Update(Device item)
     {
         var existing = await _context.Devices
-        .Include(d => d.Attributes)
-        .FirstOrDefaultAsync(d => d.Id == item.Id);
+            .Include(d => d.Attributes)
+            .FirstOrDefaultAsync(d => d.Id == item.Id);
 
         if (existing == null)
             throw new NullReferenceException($"Объект с ID {item.Id} не найден!");
