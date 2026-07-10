@@ -4,5 +4,8 @@ namespace Hope_tracKeR_back.Repositories.Interfaces;
 
 public interface IIssuanceRepository
 {
-    Task<int> Create(Issuance issuance);
+    Task Create(Issuance issuance);
+    Task<Device> GetDeviceById(int deviceId);
+    Task UpdateDevice(Device device);
+    Task SaveChangesAsync();
 }

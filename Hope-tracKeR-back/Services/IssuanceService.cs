@@ -12,14 +12,12 @@ namespace Hope_tracKeR_back.Services;
 
 public class IssuanceService : IIssuanceService
 {
-    private readonly IItemRepository<Device> _repository;
     private readonly IIssuanceRepository _issuanceRepository;
     private readonly IValidator<IssueDeviceRequest> _validator;
     private readonly IAuditLogService _auditLog;
 
-    public IssuanceService(IItemRepository<Device> repository, IIssuanceRepository issuanceRepository, IValidator<IssueDeviceRequest> validator, IAuditLogService auditLog)
+    public IssuanceService(IIssuanceRepository issuanceRepository, IValidator<IssueDeviceRequest> validator, IAuditLogService auditLog)
     {
-        _repository = repository;
         _issuanceRepository = issuanceRepository;
         _validator = validator;
         _auditLog = auditLog;
@@ -36,7 +34,7 @@ public class IssuanceService : IIssuanceService
 
         try
         {
-            var item = await _repository.GetById(request.ItemId);
+            var item = await _issuanceRepository.GetDeviceById(request.ItemId);
 
             if (item.Status != DeviceStatus.InStock)
                 return Result.Fail(new InvalidOperationError("Выдать можно только технику со статусом «В наличии»!"));
@@ -54,10 +52,11 @@ public class IssuanceService : IIssuanceService
                 UserId = request.UserId
             };
 
-            var issuanceId = await _issuanceRepository.Create(issuance);
-            await _repository.Update(item);
+            await _issuanceRepository.Create(issuance);
+            await _issuanceRepository.UpdateDevice(item);
+            await _issuanceRepository.SaveChangesAsync();
 
-            await _auditLog.LogAsync(AuditActions.Issue, nameof(Issuance), issuanceId.ToString(), issuance);
+            await _auditLog.LogAsync(AuditActions.Issue, nameof(Issuance), issuance.Id.ToString(), issuance);
             await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), new { item.Id, item.Status, item.EmployeeId });
 
             return Result.Ok();
