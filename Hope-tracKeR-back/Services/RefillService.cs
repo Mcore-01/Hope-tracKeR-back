@@ -15,17 +15,15 @@ namespace Hope_tracKeR_back.Services;
 
 public class RefillService : IRefillService
 {
-    private readonly IItemRepository<Cartridge> _repository;
     private readonly IRefillRepository _refillRepository;
     private readonly IMapper _mapper;
     private readonly IValidator<StartRefillRequest> _startRefillValidator;
     private readonly IValidator<CompleteRefillRequest> _completeRefillValidator;
     private readonly IAuditLogService _auditLog;
 
-    public RefillService(IItemRepository<Cartridge> itemRepository, IMapper mapper, IValidator<StartRefillRequest> startRefillValidator,
+    public RefillService(IMapper mapper, IValidator<StartRefillRequest> startRefillValidator,
         IValidator<CompleteRefillRequest> completeRefillValidator, IRefillRepository refillRepository, IAuditLogService auditLog)
     {
-        _repository = itemRepository;
         _mapper = mapper;
         _startRefillValidator = startRefillValidator;
         _completeRefillValidator = completeRefillValidator;
@@ -47,20 +45,20 @@ public class RefillService : IRefillService
             var refill = _mapper.Map<Refill>(refillRequest);
             refill.Status = RefillStatus.InProgress;
 
-            var item = await _repository.GetById(refill.ItemId);
+            var item = await _refillRepository.GetCartridgeById(refill.ItemId);
             var oldCartridge = new { item.Id, item.Status, item.AddressId };
 
             item.Status = CartridgeStatus.Refilling;
             item.AddressId = refill.AddressId;
 
-            await _repository.Update(item);
+            await _refillRepository.UpdateCartridge(item);
+            await _refillRepository.Create(refill);
+            await _refillRepository.SaveChangesAsync();
 
-            var refillId = await _refillRepository.Create(refill);
-
-            await _auditLog.LogAsync(AuditActions.StartRefill, nameof(Refill), refillId.ToString(), refill);
+            await _auditLog.LogAsync(AuditActions.StartRefill, nameof(Refill), refill.Id.ToString(), refill);
             await _auditLog.LogAsync(AuditActions.Update, nameof(Cartridge), item.Id.ToString(), new { item.Id, item.Status, item.AddressId });
 
-            return Result.Ok(refillId);
+            return Result.Ok(refill.Id);
         }
         catch (InvalidOperationException ex)
         {
@@ -87,7 +85,7 @@ public class RefillService : IRefillService
 
         try
         {
-            var item = await _repository.GetById(refillRequest.ItemId);
+            var item = await _refillRepository.GetCartridgeById(refillRequest.ItemId);
             var refill = await _refillRepository.GetRefillByItemId(refillRequest.ItemId);
 
             var oldCartridge = new { item.Id, item.Status, item.AddressId };
@@ -100,8 +98,9 @@ public class RefillService : IRefillService
             item.AddressId = refillRequest.AddressId;
             item.Status = CartridgeStatus.InStock;
 
-            await _repository.Update(item);
+            await _refillRepository.UpdateCartridge(item);
             await _refillRepository.Update(refill);
+            await _refillRepository.SaveChangesAsync();
 
             await _auditLog.LogAsync(AuditActions.CompleteRefill, nameof(Refill), refill.Id.ToString(), refill);
             await _auditLog.LogAsync(AuditActions.Update, nameof(Cartridge), item.Id.ToString(), new { item.Id, item.Status, item.AddressId });

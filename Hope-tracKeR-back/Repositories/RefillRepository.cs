@@ -1,4 +1,5 @@
-﻿using Hope_tracKeR_back.Data;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using Hope_tracKeR_back.Data;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -13,13 +14,9 @@ public class RefillRepository : IRefillRepository
         _context = context;
     }
 
-    public async Task<int> Create(Refill refill)
+    public async Task Create(Refill refill)
     {
-        _context.Refills.Add(refill);
-
-        await _context.SaveChangesAsync();
-
-        return refill.Id;
+        await _context.Refills.AddAsync(refill);
     }
 
     public async Task Update(Refill refill)
@@ -46,5 +43,35 @@ public class RefillRepository : IRefillRepository
             throw new NullReferenceException($"Объект с ID {itemId} не найден!");
 
         return refill;
+    }
+
+    public async Task<Cartridge> GetCartridgeById(int id)
+    {
+        var item = await _context.Cartridges
+            .Include(i => i.Address)
+            .Include(i => i.Brand)
+            .Include(i => i.Attributes)
+            .FirstOrDefaultAsync(i => i.Id == id);
+        if (item == default)
+            throw new NullReferenceException($"Объект с ID {id} не найден!");
+
+        return item;
+    }
+
+    public async Task UpdateCartridge(Cartridge item)
+    {
+        var itemIsExist = await _context.Cartridges
+            .Include(i => i.Attributes)
+            .AnyAsync(i => i.Id == item.Id);
+
+        if (!itemIsExist)
+            throw new NullReferenceException($"Объект с ID {item.Id} не найден!");
+
+        _context.Cartridges.Update(item);
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await _context.SaveChangesAsync();
     }
 }
