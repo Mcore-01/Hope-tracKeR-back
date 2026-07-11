@@ -13,13 +13,11 @@ namespace Hope_tracKeR_back.Services;
 public class WriteOffService : IWriteOffService
 {
     private readonly IWriteOffRepository _writeOffRepository;
-    private readonly IItemRepository<Device> _repository;
     private readonly IValidator<WriteOffDeviceRequest> _validator;
     private readonly IAuditLogService _auditLog;
 
-    public WriteOffService(IItemRepository<Device> repository, IWriteOffRepository writeOffRepository, IValidator<WriteOffDeviceRequest> validator, IAuditLogService auditLog)
+    public WriteOffService(IWriteOffRepository writeOffRepository, IValidator<WriteOffDeviceRequest> validator, IAuditLogService auditLog)
     {
-        _repository = repository;
         _writeOffRepository = writeOffRepository;
         _validator = validator;
         _auditLog = auditLog;
@@ -36,7 +34,7 @@ public class WriteOffService : IWriteOffService
 
         try
         {
-            var item = await _repository.GetById(writeOffDeviceRequest.ItemId);
+            var item = await _writeOffRepository.GetDeviceById(writeOffDeviceRequest.ItemId);
             var oldDevice = new { item.Id, item.Status };
 
             item.Status = DeviceStatus.WriteOff;
@@ -48,10 +46,11 @@ public class WriteOffService : IWriteOffService
                 UserId = writeOffDeviceRequest.UserId,
             };
 
-            var writeOffId = await _writeOffRepository.Create(writeOff);
-            await _repository.Update(item);
+            await _writeOffRepository.Create(writeOff);
+            await _writeOffRepository.UpdateDevice(item);
+            await _writeOffRepository.SaveChangesAsync();
 
-            await _auditLog.LogAsync(AuditActions.WriteOff, nameof(WriteOff), writeOffId.ToString(), writeOff);
+            await _auditLog.LogAsync(AuditActions.WriteOff, nameof(WriteOff), writeOff.Id.ToString(), writeOff);
             await _auditLog.LogAsync(AuditActions.Update, nameof(Device), item.Id.ToString(), new { item.Id, item.Status });
 
             return Result.Ok();
