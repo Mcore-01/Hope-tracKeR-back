@@ -4,6 +4,8 @@ using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList;
+using X.PagedList.EF;
 
 namespace Hope_tracKeR_back.Repositories;
 
@@ -24,7 +26,7 @@ public class CartridgeRepository : IItemRepository<Cartridge>
         return item.Id;
     }
 
-    public async Task<IEnumerable<Cartridge>> GetByFilters(ItemFilter filter)
+    public async Task<IPagedList<Cartridge>> GetByFilters(ItemFilter filter)
     {
         var query = _context.Cartridges
             .Include(i => i.Address)
@@ -56,11 +58,7 @@ public class CartridgeRepository : IItemRepository<Cartridge>
             }
         }
 
-        var items = await query
-            .Skip((filter.PageNumber - 1) * filter.PageSize)
-            .Take(filter.PageSize)
-            .ToListAsync();
-        return items;
+        return await query.ToPagedListAsync(filter.PageNumber, filter.PageSize);
     }
 
     public async Task<Cartridge> GetById(int id)

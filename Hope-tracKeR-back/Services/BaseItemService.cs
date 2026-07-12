@@ -57,10 +57,18 @@ public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemServi
     {
         try
         {
-            var items = await _repository.GetByFilters(filter);
-            var response = items.Select(_mapper.Map<TResponse>);
-            var pagedList = new PagedListResponse<TResponse> { PageNumber = filter.PageNumber, PageSize = filter.PageSize, Items = response };
-            return Result.Ok(pagedList);
+            var pagedList = await _repository.GetByFilters(filter);
+            var items = pagedList.Select(_mapper.Map<TResponse>);
+            var pagedListResponse = new PagedListResponse<TResponse> 
+            { 
+                PageNumber = pagedList.PageNumber, 
+                PageSize = pagedList.PageSize, 
+                PageCount = pagedList.PageCount,
+                TotalCount = pagedList.TotalItemCount,
+                Items = items 
+            };
+
+            return Result.Ok(pagedListResponse);
         }
         catch (Exception ex)
         {
