@@ -25,7 +25,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, D
     }
 
     [HttpPost("devices/filter")]
-    public async Task<ActionResult<PagedListResponse<DeviceResponse>>> GetByFilters([FromBody] ItemFilter filter)
+    public async Task<ActionResult<PagedListResponse<DeviceResponse>>> GetByFilters([FromBody] ItemFilterRequest filter)
     {
         var result = await _service.GetByFilters(filter);
 
@@ -102,7 +102,7 @@ public class DeviceController : ControllerBase, IItemController<DeviceRequest, D
     }
 
     [HttpPost("excel_items")]
-    public async Task<IActionResult> ExportIDevicesToExcel([FromBody] ItemFilter filter)
+    public async Task<IActionResult> ExportIDevicesToExcel([FromBody] ItemFilterRequest filter)
     {
         var result = await _service.ExportItemsToExcel(filter);
 

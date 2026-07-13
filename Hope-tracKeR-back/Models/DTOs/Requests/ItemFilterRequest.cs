@@ -2,14 +2,18 @@
 
 namespace Hope_tracKeR_back.Models.DTOs.Requests;
 
-public class ItemFilter
+public class ItemFilterRequest
 {
     public string? SearchField { get; set; }  
     public string? Status { get; set; }
     public DateTime? AddedDateFrom { get; set; }
     public DateTime? AddedDateTo { get; set; }
 
-    public int? AddressId { get; set; }
+    public string? Branch { get; set; }
+    public string? Building { get; set; }
+    public int? Floor { get; set; }
+    public string? Room { get; set; }
+    public int? AddressType { get; set; }
     public int? BrandId { get; set; }
 
     public string? PrinterModel { get; set; }

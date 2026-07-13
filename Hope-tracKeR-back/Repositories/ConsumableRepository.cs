@@ -1,4 +1,5 @@
 ﻿using Hope_tracKeR_back.Data;
+using Hope_tracKeR_back.Enums;
 using Hope_tracKeR_back.Models.DTOs.Requests;
 using Hope_tracKeR_back.Models.Entities;
 using Hope_tracKeR_back.Repositories.Interfaces;
@@ -25,7 +26,7 @@ public class ConsumableRepository : IItemRepository<Consumable>
         return item.Id;
     }
 
-    public async Task<IPagedList<Consumable>> GetByFilters(ItemFilter filter)
+    public async Task<IPagedList<Consumable>> GetByFilters(ItemFilterRequest filter)
     {
         var query = _context.Consumables
             .Include(i => i.Address)
@@ -39,8 +40,16 @@ public class ConsumableRepository : IItemRepository<Consumable>
             query = query.Where(i => i.Name.ToLower().Contains(searchField));
         }
 
-        if (filter.AddressId.HasValue)
-            query = query.Where(i => i.AddressId == filter.AddressId.Value);
+        if (!string.IsNullOrWhiteSpace(filter.Branch))
+            query = query.Where(i => i.Address.Branch == filter.Branch);
+        if (!string.IsNullOrWhiteSpace(filter.Building))
+            query = query.Where(i => i.Address.Building == filter.Building);
+        if (filter.Floor.HasValue)
+            query = query.Where(i => i.Address.Floor == filter.Floor);
+        if (!string.IsNullOrWhiteSpace(filter.Room))
+            query = query.Where(i => i.Address.Room == filter.Room);
+        if (filter.AddressType.HasValue)
+            query = query.Where(i => i.Address.AddressType == (AddressType)filter.AddressType);
 
         if (filter.BrandId.HasValue)
             query = query.Where(i => i.BrandId == filter.BrandId.Value);

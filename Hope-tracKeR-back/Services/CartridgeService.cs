@@ -16,7 +16,7 @@ public class CartridgeService : BaseItemService<Cartridge, CartridgeRequest, Car
     public CartridgeService(IItemRepository<Cartridge> repository, IMapper mapper, IValidator<CartridgeRequest> validator, IAuditLogService auditLog)
         : base(repository, mapper, validator, auditLog) { }
 
-    public override async Task<Result<byte[]>> ExportItemsToExcel(ItemFilter filter)
+    public override async Task<Result<byte[]>> ExportItemsToExcel(ItemFilterRequest filter)
     {
         try
         {

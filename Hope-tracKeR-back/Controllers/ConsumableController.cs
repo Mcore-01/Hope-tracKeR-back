@@ -21,7 +21,7 @@ public class ConsumableController : ControllerBase, IItemController<ConsumableRe
     }
 
     [HttpPost("сonsumables/filter")]
-    public async Task<ActionResult<PagedListResponse<ConsumableResponse>>> GetByFilters([FromBody] ItemFilter filter)
+    public async Task<ActionResult<PagedListResponse<ConsumableResponse>>> GetByFilters([FromBody] ItemFilterRequest filter)
     {
         var result = await _service.GetByFilters(filter);
 
@@ -76,7 +76,7 @@ public class ConsumableController : ControllerBase, IItemController<ConsumableRe
     }
 
     [HttpPost("excel_items")]
-    public async Task<IActionResult> ExportIDevicesToExcel([FromBody] ItemFilter filter)
+    public async Task<IActionResult> ExportIDevicesToExcel([FromBody] ItemFilterRequest filter)
     {
         var result = await _service.ExportItemsToExcel(filter);
 

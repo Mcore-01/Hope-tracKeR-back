@@ -16,7 +16,7 @@ public class DeviceService : BaseItemService<Device, DeviceRequest, DeviceRespon
     public DeviceService(IItemRepository<Device> repository, IMapper mapper, IValidator<DeviceRequest> validator, IAuditLogService auditLog)
         : base(repository, mapper, validator, auditLog) {}
 
-    public override async Task<Result<byte[]>> ExportItemsToExcel(ItemFilter filter)
+    public override async Task<Result<byte[]>> ExportItemsToExcel(ItemFilterRequest filter)
     {
         try
         {

@@ -17,7 +17,7 @@ public class DeviceRepository : IItemRepository<Device>
         _context = context;
     }
 
-    public async Task<IPagedList<Device>> GetByFilters(ItemFilter filter)
+    public async Task<IPagedList<Device>> GetByFilters(ItemFilterRequest filter)
     {
         var query = _context.Devices
             .Include(i => i.Address)
@@ -43,8 +43,16 @@ public class DeviceRepository : IItemRepository<Device>
         if (filter.AddedDateTo.HasValue)
             query = query.Where(i => i.AddedDate < filter.AddedDateTo.Value);
 
-        if (filter.AddressId.HasValue)
-            query = query.Where(i => i.AddressId == filter.AddressId.Value);
+        if (!string.IsNullOrWhiteSpace(filter.Branch))
+            query = query.Where(i => i.Address.Branch == filter.Branch);
+        if (!string.IsNullOrWhiteSpace(filter.Building))
+            query = query.Where(i => i.Address.Building == filter.Building);
+        if (filter.Floor.HasValue)
+            query = query.Where(i => i.Address.Floor == filter.Floor);
+        if (!string.IsNullOrWhiteSpace(filter.Room))
+            query = query.Where(i => i.Address.Room == filter.Room);
+        if (filter.AddressType.HasValue)
+            query = query.Where(i => i.Address.AddressType == (AddressType)filter.AddressType);
 
         if (filter.BrandId.HasValue)
             query = query.Where(i => i.BrandId == filter.BrandId.Value);

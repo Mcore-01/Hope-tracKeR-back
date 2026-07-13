@@ -6,7 +6,7 @@ namespace Hope_tracKeR_back.Repositories.Interfaces;
 
 public interface IItemRepository<T>
 {
-    Task<IPagedList<T>> GetByFilters(ItemFilter filter);
+    Task<IPagedList<T>> GetByFilters(ItemFilterRequest filter);
     Task<T> GetById(int id);
     Task<int> Create(T Value);
     Task Update(T value);

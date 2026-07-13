@@ -53,7 +53,7 @@ public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemServi
         }
     }
 
-    public virtual async Task<Result<PagedListResponse<TResponse>>> GetByFilters(ItemFilter filter)
+    public virtual async Task<Result<PagedListResponse<TResponse>>> GetByFilters(ItemFilterRequest filter)
     {
         try
         {
@@ -155,5 +155,5 @@ public abstract class BaseItemService<TEntity, TRequest, TResponse> : IItemServi
         }
     }
 
-    public abstract Task<Result<byte[]>> ExportItemsToExcel(ItemFilter filter);
+    public abstract Task<Result<byte[]>> ExportItemsToExcel(ItemFilterRequest filter);
 }

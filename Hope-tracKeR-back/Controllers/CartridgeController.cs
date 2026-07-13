@@ -22,7 +22,7 @@ public class CartridgeController : ControllerBase, IItemController<CartridgeRequ
     }
 
     [HttpPost("cartridges/filter")]
-    public async Task<ActionResult<PagedListResponse<CartridgeResponse>>> GetByFilters([FromBody] ItemFilter filter)
+    public async Task<ActionResult<PagedListResponse<CartridgeResponse>>> GetByFilters([FromBody] ItemFilterRequest filter)
     {
         var result = await _service.GetByFilters(filter);
 
@@ -77,7 +77,7 @@ public class CartridgeController : ControllerBase, IItemController<CartridgeRequ
     }
 
     [HttpPost("excel_items")]
-    public async Task<IActionResult> ExportIDevicesToExcel([FromBody] ItemFilter filter)
+    public async Task<IActionResult> ExportIDevicesToExcel([FromBody] ItemFilterRequest filter)
     {
         var result = await _service.ExportItemsToExcel(filter);
 

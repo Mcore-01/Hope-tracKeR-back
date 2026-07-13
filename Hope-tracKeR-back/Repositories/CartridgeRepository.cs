@@ -26,7 +26,7 @@ public class CartridgeRepository : IItemRepository<Cartridge>
         return item.Id;
     }
 
-    public async Task<IPagedList<Cartridge>> GetByFilters(ItemFilter filter)
+    public async Task<IPagedList<Cartridge>> GetByFilters(ItemFilterRequest filter)
     {
         var query = _context.Cartridges
             .Include(i => i.Address)
@@ -44,8 +44,16 @@ public class CartridgeRepository : IItemRepository<Cartridge>
             if (Enum.TryParse<CartridgeStatus>(filter.Status, true, out var status))
                 query = query.Where(i => i.Status == status);
 
-        if (filter.AddressId.HasValue)
-            query = query.Where(i => i.AddressId == filter.AddressId.Value);
+        if (!string.IsNullOrWhiteSpace(filter.Branch))
+            query = query.Where(i => i.Address.Branch == filter.Branch);
+        if (!string.IsNullOrWhiteSpace(filter.Building))
+            query = query.Where(i => i.Address.Building == filter.Building);
+        if (filter.Floor.HasValue)
+            query = query.Where(i => i.Address.Floor == filter.Floor);
+        if (!string.IsNullOrWhiteSpace(filter.Room))
+            query = query.Where(i => i.Address.Room == filter.Room);
+        if (filter.AddressType.HasValue)
+            query = query.Where(i => i.Address.AddressType == (AddressType)filter.AddressType);
 
         if (filter.BrandId.HasValue)
             query = query.Where(i => i.BrandId == filter.BrandId.Value);

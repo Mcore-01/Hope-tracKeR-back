@@ -6,7 +6,7 @@ namespace Hope_tracKeR_back.Controllers.Interfaces;
 
 public interface IItemController<TRequest, TResponse> where TResponse : class
 {
-    Task<ActionResult<PagedListResponse<TResponse>>> GetByFilters([FromBody] ItemFilter filter);
+    Task<ActionResult<PagedListResponse<TResponse>>> GetByFilters([FromBody] ItemFilterRequest filter);
     Task<ActionResult<TResponse>> GetById(int id);
     Task<ActionResult<int>> Create([FromBody] TRequest request);
     Task<ActionResult> Update([FromBody] TRequest request);

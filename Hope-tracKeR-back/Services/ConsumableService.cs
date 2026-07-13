@@ -15,7 +15,7 @@ public class ConsumableService : BaseItemService<Consumable, ConsumableRequest, 
     public ConsumableService(IItemRepository<Consumable> repository, IMapper mapper, IValidator<ConsumableRequest> validator, IAuditLogService auditLog)
         : base(repository, mapper, validator, auditLog) { }
 
-    public override async Task<Result<byte[]>> ExportItemsToExcel(ItemFilter filter)
+    public override async Task<Result<byte[]>> ExportItemsToExcel(ItemFilterRequest filter)
     {
         try
         {
