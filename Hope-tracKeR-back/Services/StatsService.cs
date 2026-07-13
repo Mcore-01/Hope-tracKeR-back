@@ -25,4 +25,17 @@ public class StatsService : IStatsService
             return Result.Fail(new Error($"Произошла ошибка: {ex.Message}"));
         }
     }
+
+    public async Task<Result<StatsResponse>> GetCartridgesStats()
+    {
+        try
+        {
+            var stats = await _repository.GetCartridgesStats();
+            return Result.Ok(stats);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error($"Произошла ошибка: {ex.Message}"));
+        }
+    }
 }

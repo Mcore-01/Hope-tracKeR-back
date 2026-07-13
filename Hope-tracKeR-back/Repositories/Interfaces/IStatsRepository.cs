@@ -5,4 +5,5 @@ namespace Hope_tracKeR_back.Repositories.Interfaces;
 public interface IStatsRepository
 {
     Task<StatsResponse> GetDevicesStats();
+    Task<StatsResponse> GetCartridgesStats();
 }

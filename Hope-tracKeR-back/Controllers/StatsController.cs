@@ -27,6 +27,17 @@ public class StatsController : ControllerBase
         return HandleError(result.Errors.First());
     }
 
+    [HttpGet("cartridges")]
+    public async Task<ActionResult<StatsResponse>> GetCartridgesStats()
+    {
+        var result = await _service.GetCartridgesStats();
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        return HandleError(result.Errors.First());
+    }
+
     private ActionResult HandleError(IError error)
     {
         return error switch

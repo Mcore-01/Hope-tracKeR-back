@@ -12,11 +12,24 @@ public class StatsRepository : IStatsRepository
     {
         _context = context;
     }
+
     public async Task<StatsResponse> GetDevicesStats()
     {
         var total = await _context.Devices.CountAsync();
 
         var statusCounts = await _context.Devices
+            .GroupBy(d => d.Status)
+            .Select(g => new { Status = g.Key.ToString(), Count = g.Count() })
+            .ToDictionaryAsync(g => g.Status, g => g.Count);
+
+        return new StatsResponse { Total = total, StatusCounts = statusCounts };
+    }
+
+    public async Task<StatsResponse> GetCartridgesStats()
+    {
+        var total = await _context.Cartridges.CountAsync();
+
+        var statusCounts = await _context.Cartridges
             .GroupBy(d => d.Status)
             .Select(g => new { Status = g.Key.ToString(), Count = g.Count() })
             .ToDictionaryAsync(g => g.Status, g => g.Count);
